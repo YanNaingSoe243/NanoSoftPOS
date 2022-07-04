@@ -1,0 +1,334 @@
+﻿@layout SaleMainLayout
+@page "/homepage"
+@using NanoSoftGreenMark.Data
+@inject NanoSoftGreenMark.DepandencyInjection.InterFaceModel Service
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+
+<div class="row grid-container" style="margin-bottom:20px;">
+
+    <div>
+
+        <select class="PageSize" @onchange="ChangePageSize" id="PageSize" name="PageSize">
+            <option value="10">Page Size </option>
+            <option value="20">20</option>
+            <option value="30">30</option>
+            <option value="40">40</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
+
+
+    </div>
+    <div>
+
+        <form class="example">
+            <input type="text" placeholder="Search...." name="search" @bind:event="oninput">
+            @*<button type="submit"><i class="fa fa-search"></i></button>*@
+            <div class="btn-group">
+                <button class="btn btn-success">Search</button>
+
+            </div>
+        </form>
+
+    </div>
+
+
+    <div style="margin-right:10px">
+
+        <div class="btn-group">
+            <button @onclick="@(()=>Load())" class="btn btn-success oi oi-reload"></button>
+            <button class="btn btn-danger oi oi-sort-descending"></button>
+            <button class="btn btn-warning oi oi-sort-ascending" style="color:#FFFFFF"></button>
+            @*<button class="btn btn-success">>=</button>*@
+        </div>
+
+
+    </div>
+
+    <div>
+        <button class="Icon">
+
+            <a class="notification">
+                <span class="CartIcon oi oi-heart"></span>
+                @if (getFavourite?.purchaseItems?.Count > 0)
+                {
+                    <span class="badge">
+                        @getFavourite?.purchaseItems?.Count
+                    </span>
+                }
+
+            </a>
+
+        </button>
+        <button class="Icon"  @onclick="@(()=>ShowDetail())" >
+
+            <a class="notification">
+                <span class="CartIcon oi oi-cart"></span>
+                @if (data?.purchaseItems?.Count > 0)
+                {
+                    <span class="badge">
+                        @data?.purchaseItems?.Count
+                    </span>
+                }
+
+            </a>
+
+        </button>
+    </div>
+
+</div>
+<div class="row">
+
+    <div class="column left">
+        <div class="vertical-menu">
+            @if (getCategory == null)
+            {
+                <div class="spinner"></div>
+            }
+            else
+            {
+                @if (getCategory.Count() > 0)
+                {
+
+                    @foreach (var obj in getCategory)
+                    {
+
+                        @*<CLikeButton  icon="@obj.Icon" title="@obj.CategoryName"></CLikeButton>*@
+                        @*<span @ref="HoverItem">
+                                 <a @onclick="onToggle" class="nav-link @obj.Icon @cssclass" id="@obj.ID" style="color:white"> @obj.CategoryName</a>
+                            </span>*@
+                        <a class="nav-link   @obj.Icon" @onclick="@(() => GetCategory(obj.ID))" style="color:white" id="@obj.ID"> @obj.CategoryName </a>
+                    }
+
+                }
+
+            }
+        </div>
+    </div>
+    <div class="column right">
+
+        <div class="SaleProductContainer">
+            @if (getCategory == null)
+            {
+                <div class="spinner"></div>
+            }
+            else
+            {
+                @if (getProduct.Count() > 0)
+                {
+                    ProductCount = ((PageIndex - 1) * PageSize) + 1;
+                    @foreach (Product obj in getProduct)
+                    {
+
+                        <div class="SaleCard">
+                            <div class="SaleDetail">
+                                <p>
+                                    @obj.ProductName<br />
+                                    <span class="Price"> $ @obj.SellPrice</span>
+                                </p>
+
+
+                            </div>
+                            <div class="ImgDesign">
+                                <img src="data:image/jpeg;base64,@obj?.Photo" />
+                            </div>
+                            <div class="Count">@ProductCount</div>
+
+                            <div class="AddCardButton">
+                                <div class="stabledropdown">
+                                    <button class="btn">...</button>
+                                    <div class="stabledropdown-content">
+                                        <a @onclick="(()=>AddCard(obj))">AddToCart</a>
+                                        <a @onclick="(()=>AddFavorite(obj))">Favourite</a>
+                                    </div>
+                                </div>
+                            </div>
+                            @if (getDiscountproduct.Count() > 0)
+                            {
+                                @if (getDiscountproduct.FirstOrDefault(obj1 => obj1.ProductID == obj.ID).ProductID != null)
+                                {
+                                    <div class="DiscountItem">
+                                        <span class="DPrice"> $ @obj.SellPrice</span>
+                                    </div>
+                                }
+                            }
+
+
+                        </div>
+                        ProductCount++;
+                    }
+                }
+            }
+
+
+
+        </div>
+
+        <div class="center">
+            <div class="pagination" @ref="Paging">
+                <a @onclick="(()=>Previous())">&laquo;</a>
+                @for (int i = 1; i <= PageCount; i++)
+                {
+                    var buttonNumber = i;
+                    if (i == 1)
+                    {
+                        <a @onclick="@(() => PageEvent(buttonNumber))">@i</a>
+                    }
+                    else
+                    {
+                        <a @onclick="@(() => PageEvent(buttonNumber))">@i</a>
+                    }
+
+                }
+                <a @onclick="(()=>Next())">&raquo;</a>
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+</div>
+
+<div class="row">
+    <Discountalert>
+
+    </Discountalert>
+</div>
+
+<DetailPage @ref="detailPage"  invoice="@data" ></DetailPage>
+
+
+@code {
+    protected DetailPage detailPage { get; set; }
+    string cssclass = "active";
+    int count = 1;
+    int facount = 0;
+    int ProductCount = 1;
+    private IEnumerable<Category> getCategory { get; set; }
+    ElementReference HoverItem;
+    protected ElementReference Paging;
+    private IEnumerable<Product> getProduct { get; set; }
+    Invoice data;
+    InvoiceItem dataItem;
+    Invoice getFavourite;
+    private IEnumerable<DiscountProduct> getDiscountproduct { get; set; } = new List<DiscountProduct>();
+    protected override async System.Threading.Tasks.Task OnInitializedAsync()
+    {
+
+        await Load();
+        ProductCount = 1;
+        var FavouriteResult = await Service.Invoices.GetAsync(-1, 20);
+        getFavourite = FavouriteResult.FirstOrDefault(obj => obj.OrderStatus == OrderStatus.Favourite);
+        if (getFavourite == null)
+        {
+            getFavourite = new Invoice();
+        }
+
+        data = new Invoice();
+        dataItem = new InvoiceItem();
+
+
+    }
+    protected async System.Threading.Tasks.Task Load()
+    {
+        var HRDResult = await Service.Products.GetAsync(PageIndex, PageSize);
+        getProduct = HRDResult;
+        PageCount = await Service.Products.TotalPage(PageSize);
+        var CategoryResult = await Service.Categorys.GetAsync(-1, 20);
+        getCategory = CategoryResult;
+        var DiscountResult = await Service.DiscountProducts.GetAsync(-1, 20);
+        getDiscountproduct = DiscountResult.Where(obj => obj.ExpiryDate > DateTime.Now);
+
+
+
+    }
+
+
+    protected int PageSize { get; set; } = 10;
+    protected int PageIndex { get; set; } = 1;
+    //protected int Count { get; set; } = 1;
+    protected int PageCount { get; set; } = 0;
+    protected async Task Previous()
+    {
+        if (PageIndex <= 1)
+        {
+            PageIndex = 1;
+        }
+        else
+        {
+            PageIndex--;
+        }
+        await Load();
+    }
+    protected async Task Next()
+    {
+        if (PageIndex < PageCount)
+        {
+            PageIndex++;
+        }
+        else
+        {
+            PageIndex = PageCount;
+        }
+        await Load();
+    }
+    protected async Task PageEvent(int value)
+    {
+        PageIndex = value;
+        await Load();
+    }
+    protected async Task ChangePageSize(ChangeEventArgs e)
+    {
+        PageSize = Convert.ToInt32(e.Value);
+        await Load();
+    }
+
+    protected void GetCategory(int e)
+    {
+
+        var HRDResult = getCategory.FirstOrDefault(obj => obj.ID == Convert.ToInt32(e)).Products;
+        getProduct = HRDResult;
+
+    }
+    protected async Task AddCard(Product p)
+    {
+
+        if (p != null)
+        {
+            dataItem.ProductFK = p.ID;
+            dataItem.Products = p;
+            dataItem.UnitPrice = p.SellPrice;
+            dataItem.OrderStatus = OrderStatus.Order;
+            data.purchaseItems.Add(dataItem);
+            dataItem = new InvoiceItem();
+
+        }
+
+
+    }
+    protected async Task AddFavorite(Product p)
+    {
+
+        if (p != null)
+        {
+            dataItem.ProductFK = p.ID;
+            dataItem.Products = p;
+            dataItem.OrderStatus = OrderStatus.Favourite;
+            getFavourite.purchaseItems.Add(dataItem);
+            dataItem = new InvoiceItem();
+
+        }
+
+
+    }
+    protected async Task ShowDetail()
+    {
+        detailPage.Show();
+        // NavigationManager.NavigateTo("/detailpage");
+    }
+
+
+}

@@ -1,0 +1,181 @@
+﻿@page "/productpage"
+@inherits ProductComponent;
+
+
+<h1 style="font-size:18px">Product Management</h1>
+<div class="grid-container" style="width:98%">
+
+    <div>
+
+        <select class="PageSize" @onchange="ChangePageSize" id="PageSize" name="PageSize">
+            <option value="10">Page Size </option>
+            <option value="20">20</option>
+            <option value="30">30</option>
+            <option value="40">40</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
+
+
+    </div>
+    <div>
+
+        <form class="example">
+            <input type="text" placeholder="Search.." name="search" @bind="SearchTerm" @bind:event="oninput">
+            @*<button type="submit"><i class="fa fa-search"></i></button>*@
+        </form>
+
+    </div>
+
+    <div>
+        <button class="Icon" @onclick="AddCategory"><i class="oi oi-plus" style="padding-right:10px;"></i></button>
+    </div>
+    <div style="margin-right:10px">
+        <div class="btn-group">
+            <button class="btn btn-danger">ToPrint</button>
+            <button class="btn btn-warning" @onclick="ExportToExcel">ToExcel</button>
+            <button class="btn btn-success" @onclick="ExportToCSV">ToCSV</button>
+        </div>
+
+    </div>
+
+</div>
+<div class="icon-bar">
+    <a @onclick="@(() => Load())"><span class="tooltiptext">All Product</span><i class="fa fa-home"></i></a>
+    <a @onclick="@(() => CheckActive(true))"><span class="tooltiptext">Active Product</span><i class="fas fa-user-check"></i></a>
+    <a @onclick="@(() => CheckActive(false))"><span class="tooltiptext">Inactive Product</span><i class="fas fa-user-times"></i></a>
+
+
+    @if (getCategory != null)
+    {
+        @foreach (var obj in getCategory)
+        {
+            <a  @onclick="@(() => GetCategory(obj.ID))"> <span class="tooltiptext">"@obj.CategoryName</span> <i class="@obj.Icon" alt="@obj.CategoryName"></i></a>
+        }
+    }
+</div>
+
+<div class="Table-container" style="width:98%">
+
+
+    <div>
+        @if (getProduct == null)
+        {
+            <div class="spinner"></div>
+        }
+        else
+        {
+
+    <div class="container1">
+        @if (getProduct.Count() > 0)
+        {
+            Count = ((PageIndex - 1) * PageSize) + 1;
+            @foreach (var obj in getProduct)
+            {
+              
+                <div class="card-wrapper1">
+
+                    <div class="card1">
+                        <div class="card-image1">
+
+                            <img src="data:image/jpeg;base64,@obj?.Photo"  />
+
+                            <div class="details">
+                                <h2>
+                                    @if (obj?.Status == 0)
+                                    {
+                                        <input type="checkbox" checked="checked" name="Active">
+                                    }
+                                    else
+                                    {
+                                        <input type="checkbox" name="Active">
+                                    }
+                                   
+                                    <span class="job-title"> @obj.ProductName</span>  <br />
+                                    <span class="job-title"><i class="fas fa-tag" style="color:#5e09ce"></i> Price :  @obj.UnitPrice</span>
+
+
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="details">
+                            <div class="tabledropdown" style="margin-left:85%">
+                                <button class="btn">...</button>
+                                <div class="tabledropdown-content">
+                                    <a @onclick="(() => EditCategory(obj.ID))">Edit</a>
+                                    <a @onclick="(() => Delete(obj.ID))">Delete</a>
+
+                                </div>
+                            </div>
+                            <h2>
+                                <span class="job-title">
+                                    @obj.Barcode
+                                </span>
+
+                                <br>
+                                <span class="job-title">Product Name: @obj.ProductName</span>
+                                <br />
+                                <span class="job-title">ManufacturerPrice: @obj.ManufacturerPrice</span>
+                                <br />
+                                <span class="job-title">Unit Per  Price: @obj.UnitPrice</span>
+                                <br>
+                                <span class="job-title">Package Per  Price: @obj.SellPrice</span>
+                                <br>
+
+                                <span class="job-title">Brand: @obj.Brand?.BrandName</span>
+                                <br>
+                                <span class="job-title">Category:@obj.Category?.CategoryName</span>
+
+                                <br>
+                                <span class="job-title">Property: @obj.Property?.Properties</span>
+                                <br>
+                                <span class="job-title">Note: @obj.Note</span>
+
+
+                            </h2>
+                            @*<div class="btngroup">
+            <button class="Icon" @onclick="(() => Delete(obj.ID))"><i class="oi oi-trash"></i></button>
+            <button class="Icon" @onclick="(() => EditCategory(obj.ID))"><i class="oi oi-pencil"></i></button>
+        </div>*@
+                        </div>
+                    </div>
+
+
+                </div>
+            }
+        }
+    </div>
+
+        }
+
+    </div>
+    <ConfirnationForm @ref="DeleteConfirmation" ConfirmationChange="ConfirmDelete_Click"
+                      ConfirmationMessage=@($"Are you sure you want to delete")>
+    </ConfirnationForm>
+    <AddProduct @ref="addCategory" EventAdd="AddData"></AddProduct>
+
+    <div class="center">
+        <div class="pagination" @ref="Paging">
+            <a @onclick="(()=>Previous())">&laquo;</a>
+            @for (int i = 1; i <= PageCount; i++)
+            {
+                var buttonNumber = i;
+                if (i == 1)
+                {
+                    <a @onclick="@(() => PageEvent(buttonNumber))">@i</a>
+                }
+                else
+                {
+                    <a @onclick="@(() => PageEvent(buttonNumber))">@i</a>
+                }
+
+            }
+            <a @onclick="(()=>Next())">&raquo;</a>
+        </div>
+    </div>
+
+
+
+</div>
+
+

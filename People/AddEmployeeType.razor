@@ -1,0 +1,93 @@
+﻿@page "/employeetypeadd/{Id:int}"
+@page "/employeetypeadd"
+@inject IJSRuntime JSRuntime
+@using NanoSoftGreenMark.Data
+@inject NanoSoftGreenMark.DepandencyInjection.InterFaceModel Service
+
+@if (ShowConfirmation)
+{
+
+    <div class="model">
+
+        <form class="model-content animate">
+            <div class="imgcontainer">
+                <span @onclick="Close" class="close" title="Close Modal">&times;</span>
+                @*<img src="img_avatar2.png" alt="Avatar" class="avatar">*@
+                <h1>@PageHeader</h1>
+                <p>Please fill in this form to create  Employee Type .</p>
+            </div>
+
+            <div class="container">
+                <label for="uname"><b>Employee Type</b></label>
+                <input type="text" placeholder="Enter Employee Type  Name" @bind-value="data.EmployeeTypeName" name="FirstName" required>
+
+
+
+
+                @*<label>
+                        <input type="checkbox" checked="checked" name="Active"> Active
+                    </label>*@
+            </div>
+
+            <div class="ModelFooter">
+                <button type="button" @onclick="Close" class="btn btn-danger cancelbtn">Cancel</button>
+                <button type="button" @onclick="(()=>OnConfirmationChange(data))" class="btn btn-success savebtn">Save</button>
+                @*<span class="psw">Forgot <a href="#">password?</a></span>*@
+            </div>
+        </form>
+    </div>
+}
+
+@code {
+
+    protected bool ShowConfirmation { get; set; }
+    [Parameter]
+    public EmployeeType data { get; set; }
+    ElementReference Model { get; set; }
+    [Parameter]
+    public int Id { get; set; }
+    public string PageHeader { get; set; }
+    public void Show()
+    {
+        ShowConfirmation = true;
+
+        PageHeader = "Employee Type  Create";
+        data = new EmployeeType();
+    }
+    public void Close()
+    {
+        ShowConfirmation = false;
+        StateHasChanged();
+    }
+    public async void Edit(int ID)
+    {
+        ShowConfirmation = true;
+        PageHeader = "Employee Type Edit";
+        data = await Service.EmployeeTypes.GetAsync(ID);
+        StateHasChanged();
+
+    }
+
+
+    protected override async System.Threading.Tasks.Task OnInitializedAsync()
+    {
+        data = new EmployeeType();
+
+        //await Load();
+
+
+    }
+
+
+
+    [Parameter]
+    public EventCallback<EmployeeType> EventAdd { get; set; }
+    protected async Task OnConfirmationChange(EmployeeType value)
+    {
+        ShowConfirmation = true;
+        await EventAdd.InvokeAsync(value);
+        data = new EmployeeType();
+    }
+
+
+}

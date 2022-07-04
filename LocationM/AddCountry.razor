@@ -1,0 +1,93 @@
+﻿@page "/countryadd/{Id:int}"
+@page "/countryadd"
+@inject IJSRuntime JSRuntime
+@using NanoSoftGreenMark.Data
+@inject NanoSoftGreenMark.DepandencyInjection.InterFaceModel Service
+
+@if (ShowConfirmation)
+{
+
+    <div class="model">
+
+        <form class="model-content animate">
+            <div class="imgcontainer">
+                <span @onclick="Close" class="close" title="Close Modal">&times;</span>
+                @*<img src="img_avatar2.png" alt="Avatar" class="avatar">*@
+                <h1>@PageHeader</h1>
+                <p>Please fill in this form to create  Country .</p>
+            </div>
+
+            <div class="container">
+                <label for="uname"><b>Category</b></label>
+                <input type="text" placeholder="Enter Country Name" @bind-value="data.CountryName" name="FirstName" required>
+
+             
+
+
+                @*<label>
+                        <input type="checkbox" checked="checked" name="Active"> Active
+                    </label>*@
+            </div>
+
+            <div class="ModelFooter">
+                <button type="button" @onclick="Close" class="btn btn-danger cancelbtn">Cancel</button>
+                <button type="button" @onclick="(()=>OnConfirmationChange(data))" class="btn btn-success savebtn">Save</button>
+                @*<span class="psw">Forgot <a href="#">password?</a></span>*@
+            </div>
+        </form>
+    </div>
+}
+
+@code {
+
+    protected bool ShowConfirmation { get; set; }
+    [Parameter]
+    public Country data { get; set; }
+    ElementReference Model { get; set; }
+    [Parameter]
+    public int Id { get; set; }
+    public string PageHeader { get; set; }
+    public void Show()
+    {
+        ShowConfirmation = true;
+
+        PageHeader = "Country Create";
+        data = new Country();
+    }
+    public void Close()
+    {
+        ShowConfirmation = false;
+       // StateHasChanged();
+    }
+    public async void Edit(int ID)
+    {
+        ShowConfirmation = true;
+        PageHeader = "Country Edit";
+        data = await Service.Countries.GetAsync(ID);
+       // StateHasChanged();
+
+    }
+
+
+    protected override async System.Threading.Tasks.Task OnInitializedAsync()
+    {
+        data = new Country();
+
+        //await Load();
+
+
+    }
+
+
+
+    [Parameter]
+    public EventCallback<Country> EventAdd { get; set; }
+    protected async Task OnConfirmationChange(Country value)
+    {
+        ShowConfirmation = true;
+        await EventAdd.InvokeAsync(value);
+        data = new Country();
+    }
+
+
+}

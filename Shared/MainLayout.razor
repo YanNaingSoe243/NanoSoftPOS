@@ -1,0 +1,173 @@
+﻿@inherits LayoutComponentBase
+@inject IJSRuntime JSRuntime
+@*<div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <div class="main">
+        <div class="top-row px-4">
+            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+        </div>
+
+        <div class="content px-4">
+            @Body
+        </div>
+    </div>*@
+    <div class="sidenav" @ref="Sidebar">
+
+        @*<p class="Brand">*@
+
+
+        @*</p>*@
+        
+
+        <div class="OverFlow">
+            <div class="subnav">
+                <div class="groupheader" style=" font-weight: bold;color: #5e09ce;padding-top:15px;font-size: 30px;padding-bottom:15px;position:sticky">NanoSoft</div>
+
+            </div>
+            <div class="subnav">
+                <div class="groupheader" ondblclick="document.getElementById('id01').style.display ='none'" onclick="document.getElementById('id01').style.display ='block'">Financial Management<a class="fa fa-caret-down nav-link"></a></div>
+                <ul id="id01" style="display:block">
+                    <li>   <a href="#team">Delivery Management</a></li>
+                    <li> <a href="#careers">Accounting Management</a></li>
+                    <li> <a href="#careers">Bank Management</a></li>
+                    @*<li> <a href="counter">Bank</a></li> bank *@
+                </ul>
+            </div>
+            <div class="subnav">
+                <div class="groupheader" ondblclick="document.getElementById('id05').style.display ='none'" onclick="document.getElementById('id05').style.display ='block'">Discount Management<a class="fa fa-caret-down nav-link"></a></div>
+                <ul id="id05">
+                    <li> <a href="#careers">Discount Product</a></li>
+                    <li> <a href="discounttypepage">DiscountType</a></li>
+                    <li> <a href="giftcardpage">GiftCard</a></li>
+                    <li> <a href="discountpage">Discount</a></li>
+                </ul>
+            </div>
+
+            <div class="subnav">
+                <div class="groupheader" ondblclick="document.getElementById('id02').style.display ='none'" onclick="document.getElementById('id02').style.display ='block'">Product Management<a class="fa fa-caret-down nav-link"></a></div>
+                <ul id="id02" style="display:block">
+                    <li> <a href="categorypage">Category</a></li>
+                    <li>   <a href="productpage">Product</a></li>
+                    <li>   <a href="brandpage">Brand</a></li>
+                    <li>   <a href="productpropertypage">Product Property</a></li>
+                    <li><a href="purchasepage">Purchase</a></li>
+
+                </ul>
+            </div>
+            <div class="subnav">
+                <div class="groupheader" ondblclick="document.getElementById('id03').style.display ='none'" onclick="document.getElementById('id03').style.display ='block'">People Management<a class="fa fa-caret-down nav-link"></a></div>
+                <ul id="id03">
+                    <li> <a href="employeepage">Employee</a></li>
+                    <li> <a href="supplierpage">Supplier</a></li>
+                    <li> <a href="employeetypepage">Employee Type</a></li>
+                    <li> <a href="rolepage">Role</a></li>
+
+
+                </ul>
+            </div>
+            <div class="subnav">
+                <div class="groupheader"  ondblclick="document.getElementById('id04').style.display ='none'" onclick="document.getElementById('id04').style.display ='block'">Location Management <a class="fa fa-caret-down nav-link"></a></div>
+                <ul id="id04">
+                    <li> <a href="locationpage">Shop Location</a></li>
+                    <li> <a href="citypage">City</a></li>
+                    <li> <a href="regionpage">Region</a></li>
+                    <li> <a href="countrypage">Country</a></li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+<div class="flex-container" @ref="Main">
+    <div class="flex-item-left" @ref="ActiveItem">
+        <button class="tooggle" @onclick="Toggle">
+            @*<i class="fa fa-bars fa-lg"></i>*@
+            <i class="oi oi-menu"></i>
+
+
+        </button>
+        <ul>
+            <li><a href="counter" class="nav-link Current">Home</a></li>
+            <li><a href="homepage" class="nav-link">Point Of Sale</a></li>            
+            <li><a href="#contact" class="nav-link">Customer Management</a></li>
+            <li><a href="#contact" class="nav-link">Register</a></li>
+            <li><a href="#contact" class="nav-link">Message</a></li>
+        </ul>
+
+
+    </div>
+    <div class="flex-item-right">
+
+        <div class="rightbar">
+            <div>
+              
+            </div>
+            <img src="css/download.jpg" alt="User" class="avatar" />
+
+            <div class="dropdown">
+                <button class="btn">Hello Admin<i style="margin-left:5px" class="fa fa-caret-down fa-lg"></i></button>
+                <div class="dropdown-content">
+                    <a href="#">Change Password</a>
+                    <a href="#">Profile</a>
+                    <a href="#">Logout</a>
+                    <a href="#">Setting</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+    <div class="px-3 pt-3 row">
+          @Body
+    </div>
+
+</div>
+    
+
+
+
+@code{
+    ElementReference ActiveItem;
+    ElementReference Main;
+    ElementReference Sidebar;
+    ElementReference UpDown;
+
+    protected override async Task OnAfterRenderAsync(bool a)
+    {
+        if (a)
+        {
+
+            await JSRuntime.InvokeAsync<bool>("NavBottom", ActiveItem);
+
+
+
+        }
+    }
+    bool hidden = false;
+    public async void Toggle()
+    {
+
+        if (hidden != false)
+        {
+
+            await JSRuntime.InvokeAsync<bool>("Toggle", Sidebar, Main, hidden);
+            hidden = false;
+        }
+        else
+        {
+            await JSRuntime.InvokeAsync<bool>("Toggle", Sidebar, Main, hidden);
+            hidden = true;
+        }
+
+
+    }
+    public async void UpDownClick()
+    {
+        await JSRuntime.InvokeAsync<bool>("UpDown", UpDown);
+    }
+
+   
+
+}

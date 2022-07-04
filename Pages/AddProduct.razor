@@ -1,0 +1,282 @@
+﻿@page "/productadd/{Id:int}"
+@page "/productadd"
+@inject IJSRuntime JSRuntime
+@using NanoSoftGreenMark.Data
+@inject NanoSoftGreenMark.DepandencyInjection.InterFaceModel Service
+@using BlazorInputFile
+@using System.IO;
+
+@if (ShowConfirmation)
+{
+
+    <div class="model">
+
+        <form class="model-content animate">
+            <div class="imgcontainer">
+                <span @onclick="Close" class="close" title="Close Modal">&times;</span>
+                @*<img src="img_avatar2.png" alt="Avatar" class="avatar">*@
+                <h1>@PageHeader</h1>
+                <p>Please fill in this form to create  Product .</p>
+            </div>
+            <div style="text-align:right">
+                <div style="margin-right:100px;margin-bottom:10px;">
+                    <img class="pic" src="data:image/jpeg;base64,@data?.Photo" style="height:150px;width:150px;" />
+                </div>
+                <InputFile OnChange="@OnInputFileChange" multiple />
+            </div>
+
+            <div class="container">
+                <label for="uname"><b>Product</b></label>
+                <input type="text" placeholder="Enter Product  Name" @bind-value="data.ProductName" name="FirstName" required>
+
+                <label for="psw"><b>Barcode</b></label>
+                <input type="text" placeholder="Enter a Barcode" @bind-value="data.Barcode" name="lastName" required>
+                @if (BarCodeExit==true)
+                {
+                    <div class="validation"  style="width:100%">BarCode  is already Exited </div>
+                }
+                <div class="row">
+                    <div class="col-25" style="padding-right:10px;">
+                        <label for="uname"><b>Unit Per tPrice </b></label>
+                    </div>
+                    <div class="col-25" style="padding-right:10px;">
+                        <label for="uname"><b>Package Per  Price</b></label>
+                    </div>
+                    <div class="col-25" style="padding-right:20px;">
+                        <label for="uname"><b>Manufacturer Price</b></label>
+                    </div>
+                    <div class="col-25" style="padding-right:10px;">
+                        <label for="uname"><b>Alert Quantity </b></label>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-25" style="padding-right:10px;">
+                        <input type="text" placeholder="Enter a Unit Price" @bind-value="data.UnitPrice" name="FirstName" required>
+                    </div>
+                    <div class="col-25" style="padding-right:10px;">
+                        <input type="text" placeholder="Enter a Sell Price" @bind-value="data.SellPrice" name="FirstName" required>
+                    </div>
+                    <div class="col-25" style="padding-right:10px;">
+                        <input type="text" placeholder="Enter a  Manufacturer  Price" @bind-value="data.ManufacturerPrice" name="FirstName" required>
+                    </div>
+                    <div class="col-25" style="padding-right:10px;padding-top:12px;">
+                        <input type="number" style="height:40px; width:80px;" placeholder="Enter a  Alert Quantity" @bind-value="data.AlertQty" name="FirstName" required>
+                    </div>
+
+                </div>
+                <div class="row">
+
+                    <label for="uname"><b>Category </b></label>
+                    <select @bind="@data.CategoryID" required>
+                        <option value="0">Select Category </option>
+                        @foreach (Category obj in getCategory)
+                        {
+                            <option value="@obj.ID">@obj?.CategoryName</option>
+                        }
+                    </select>
+                    @if (data?.CategoryID == 0 || data?.CategoryID == null)
+                    {
+                <div class="validation" style="display:block;width:100%">Category is  Empty </div>
+                    }
+                    else
+                    {
+                        <div class="validation" style="display:none">Category is  Empty </div>
+                    }
+                </div>
+
+                <div class="row">
+
+                    <label for="uname"><b>Brand </b></label>
+                    <select @bind="@data.BrandID" required>
+                        <option value="0">Select Brand </option>
+                        @foreach (Brand obj in getBrand)
+                        {
+                            <option value="@obj.ID">@obj?.BrandName</option>
+                        }
+                    </select>
+                    @if (data?.BrandID == 0 || data?.BrandID == null)
+                    {
+                        <div class="validation" style="display:block;width:100%">Brand is  Empty </div>
+                    }
+                    else
+                    {
+                        <div class="validation" style="display:none">Brand is  Empty </div>
+                    }
+                </div>
+                <div class="row">
+
+                    <label for="uname"><b>Product Properties</b></label>
+                    <select @bind="@data.PropertyID" required>
+                        <option value="0">Select Proudct Properties </option>
+                        @foreach (ProductProperty obj in getProductProperty)
+                        {
+                            <option value="@obj.ID">@obj?.Properties</option>
+                        }
+                    </select>
+                    @if (data?.PropertyID == 0 || data?.PropertyID == null)
+                    {
+                        <div class="validation" style="display:block;width:100%">Product Properties is  Empty </div>
+                    }
+                    else
+                    {
+                        <div class="validation" style="display:none">Product Properties is  Empty </div>
+                    }
+                </div>
+
+                <div class="row">
+
+                    <label for="uname"><b> Note</b></label>
+                    <textarea placeholder="Enter a  Note " @bind="data.Note" name="FirstName" required />
+                </div>
+                <div class="row">
+                    <label>
+                        <input type="checkbox" @onchange="CheckActive"  checked="checked" name="Active"> Active
+                    </label>
+                </div>
+
+            </div>
+
+            <div class="ModelFooter">
+                <button type="button" @onclick="Close" class="btn btn-danger cancelbtn">Cancel</button>
+                <button type="button" @onclick="(()=>OnConfirmationChange(data))" class="btn btn-success savebtn">Save</button>
+                @*<span class="psw">Forgot <a href="#">password?</a></span>*@
+            </div>
+        </form>
+    </div>
+}
+
+@code {
+
+    protected bool ShowConfirmation { get; set; }
+    [Parameter]
+    public Product data { get; set; }
+    ElementReference Model { get; set; }
+    [Parameter]
+    public int Id { get; set; }
+    public string PageHeader { get; set; }
+    private IEnumerable<ProductProperty> getProductProperty { get; set; }
+    private IEnumerable<Brand> getBrand { get; set; }
+    private IEnumerable<Category> getCategory { get; set; }
+    bool BarCodeExit = false;
+    bool update = false;
+    public void Show()
+    {
+        ShowConfirmation = true;
+
+        PageHeader = "Product  Create";
+        data = new Product();
+        BarcodeGenerate();
+    }
+    public void Close()
+    {
+        ShowConfirmation = false;
+        StateHasChanged();
+    }
+    public async void Edit(int ID)
+    {
+        ShowConfirmation = true;
+        PageHeader = "Product Edit";
+        data = await Service.Products.GetAsync(ID);
+       
+        StateHasChanged();
+        update = true;
+
+    }
+
+
+    protected override async System.Threading.Tasks.Task OnInitializedAsync()
+    {
+        data = new Product();
+
+        //await Load();
+        var ProductPresult = await Service.ProductPropertys.GetAsync(-1, 20);
+        getProductProperty = ProductPresult;
+        var BrandResult = await Service.Brands.GetAsync(-1, 20);
+        getBrand = BrandResult;
+        var CategoryResult = await Service.Categorys.GetAsync(-1, 20);
+        getCategory = CategoryResult;
+        BarcodeGenerate();
+
+
+    }
+
+
+
+    [Parameter]
+    public EventCallback<Product> EventAdd { get; set; }
+    protected async Task OnConfirmationChange(Product value)
+    {
+        ShowConfirmation = true;
+        if (update == false)
+        {
+            Product p = await Service.Products.BarcodeExit(value.Barcode);
+            if (p != null)
+            {
+                BarCodeExit = true;
+            }
+            else
+            {
+                BarCodeExit = false;
+                if (data.PropertyID == null || data.BrandID == null || data.CategoryID == null)
+                {
+                    //  await InvokeAsync(() => { StateHasChanged(); });
+                }
+                else
+                {
+                    ShowConfirmation = true;
+                    await EventAdd.InvokeAsync(value);
+                    data = new Product();
+                    BarcodeGenerate();
+                }
+            }
+        }
+        else
+        {
+            BarCodeExit = false;
+            ShowConfirmation = true;
+            await EventAdd.InvokeAsync(value);
+            data = new Product();
+            BarcodeGenerate();
+        }
+        update = false;
+
+    }
+    void BarcodeGenerate()
+    {
+        string guid = Guid.NewGuid().ToString("N").Substring(0, 12);
+        data.Barcode = guid.ToUpper();
+
+    }
+    void CheckActive(ChangeEventArgs e)
+    {
+        if (Convert.ToBoolean(e.Value) == false)
+        {
+            data.Status = Status.Inactive;
+        }
+        else
+        {
+            data.Status = Status.Active;
+        }
+
+
+    }
+    private async Task OnInputFileChange(IFileListEntry[] files)
+    {
+        var rawFile = files.FirstOrDefault();
+        if (rawFile != null)
+        {
+            // Load as an image file in memory
+            var format = "image/jpeg";
+            var imageFile = await rawFile.ToImageFileAsync(format, 640, 480);
+            var ms = new MemoryStream();
+            await imageFile.Data.CopyToAsync(ms);
+            //photo = $"data:{format};base64,{Convert.ToBase64String(ms.ToArray())}";
+            // Make a data URL so we can display it
+            data.Photo = Convert.ToBase64String(ms.ToArray());
+
+        }
+    }
+
+
+}

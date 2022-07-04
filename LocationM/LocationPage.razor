@@ -1,0 +1,141 @@
+﻿@page "/locationpage"
+@inherits LocationComponent
+
+
+<h1 style="font-size:18px">Location Management</h1>
+<div class="grid-container">
+
+    <div>
+
+        @*<label for="uname"><b>Show:</b></label>*@
+        <select class="PageSize" @onchange="ChangePageSize" id="PageSize" name="PageSize">
+            <option value="10">Page Size </option>
+            <option value="20">20</option>
+            <option value="30">30</option>
+            <option value="40">40</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
+
+
+    </div>
+    <div>
+
+        <form class="example">
+            <input type="text" placeholder="Search.." name="search" @bind="SearchTerm" @bind:event="oninput">
+            @*<button type="submit"><i class="fa fa-search"></i></button>*@
+        </form>
+
+    </div>
+
+    <div>
+        <button class="Icon" @onclick="AddCategory"><i class="oi oi-plus" style="padding-right:10px;"></i></button>
+    </div>
+    <div style="margin-right:10px">
+        <div class="btn-group">
+            <button class="btn btn-danger">ToPrint</button>
+            <button class="btn btn-warning" @onclick="ExportToExcel">ToExcel</button>
+            <button class="btn btn-success" @onclick="ExportToCSV">ToCSV</button>
+        </div>
+
+    </div>
+
+</div>
+<div class="Table-container">
+    <div>
+        @if (getResult == null)
+        {
+            <div class="spinner"></div>
+        }
+        else
+        {
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th> No.</th>
+                        <th>ShopeName</th>
+                        <th>Latitude</th>
+                        <th>Longitude</th>
+                        <th>Phone</th>
+                        <th>Contact</th>
+                        <th>City</th>
+                        <th>Region</th>
+                        <th>Country</th>
+
+
+                        <th width="50px"> </th>
+                        <th width="50px"> </th>
+
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @if (getResult.Count() > 0)
+                    {
+                        Count = ((PageIndex - 1) * PageSize) + 1;
+                        @foreach (var obj in getResult)
+                        {
+                    <tr>
+                        <td>@Count</td>
+                        <td>@obj.ShopeName</td>
+                        <td>@obj.Latitude</td>
+                        <td>@obj.Longitude</td>
+                        <td>@obj.Phone</td>
+                        <td>@obj.Contact</td>
+                        <td>@obj.City?.CityName</td>
+                        <td>@obj.City?.Region?.RegionName</td>
+                        <td>@obj.City?.Region?.Country?.CountryName</td>
+                        <td><img class="pic" src="data:image/jpeg;base64,@obj.ImagePath" style="height:45px;width:45px;" /> </td>
+                        <td>
+
+
+                            <button class="Icon" @onclick="(() => Delete(obj.ID))"><i class="oi oi-trash"></i></button>
+
+
+
+                        </td>
+                        <td>
+                            <button class="Icon" @onclick="(() => EditCategory(obj.ID))"><i class="oi oi-pencil"></i></button>
+                        </td>
+                    </tr>
+                            Count++;
+
+
+
+                        }
+
+                    }
+                </tbody>
+            </table>
+
+        }
+    </div>
+    <DeleteConfirm @ref="DeleteConfirmation" ConfirmationChange="ConfirmDelete_Click"
+                   ConfirmationMessage=@($"Are you sure you want to delete")>
+    </DeleteConfirm>
+    <AddLocation @ref="addComponent" EventAdd="AddData"></AddLocation>
+
+    <div class="center">
+        <div class="pagination" @ref="Paging">
+            <a @onclick="(()=>Previous())">&laquo;</a>
+            @for (int i = 1; i <= PageCount; i++)
+            {
+                var buttonNumber = i;
+                if (i == 1)
+                {
+                    <a   @onclick="@(() => PageEvent(buttonNumber))">@i</a>
+                }
+                else
+                {
+                    <a  @onclick="@(() => PageEvent(buttonNumber))">@i</a>
+                }
+
+            }
+            <a @onclick="(()=>Next())">&raquo;</a>
+        </div>
+    </div>
+</div>
+
+
+

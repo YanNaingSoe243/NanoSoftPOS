@@ -1,0 +1,423 @@
+﻿@page "/employeeadd/{Id:int}"
+@page "/employeeadd"
+@inject IJSRuntime JSRuntime
+@using NanoSoftGreenMark.Data
+@inject NanoSoftGreenMark.DepandencyInjection.InterFaceModel Service
+@using BlazorInputFile
+@using System.IO;
+
+@if (ShowConfirmation)
+{
+
+    <div class="model">
+
+        <form class="model-content animate">
+          
+            <div class="imgcontainer">
+                <span @onclick="Close" class="close" title="Close Modal">&times;</span>
+                @*<img src="img_avatar2.png" alt="Avatar" class="avatar">*@
+                <h1>@PageHeader</h1>
+                <p>Please fill in this form to create  Employee .</p>
+
+            </div>
+            @*<div style="text-align:right">
+                <div style="margin-right:100px;margin-bottom:10px;">
+                    <img class="pic" src="@data.Person" style="height:150px;width:150px;" />
+                </div>
+                <InputFile OnChange="@OnInputFileChange" multiple />
+            </div>*@
+        <div class="container">
+            <div class="row">
+                <div class="col-50">
+                    <label for="uname"><b>Employee Name</b></label>
+                </div>
+                <div class="col-50">
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-50" style="padding-right:10px;">
+                    <input type="text" placeholder="Enter First Name" @bind-value="data.Person.FirstName" name="FirstName" required>
+                </div>
+                <div class="col-50">
+                    <input type="text" placeholder="Enter Last Name" @bind-value="data.Person.LastName" name="FirstName" required>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-50" style="padding-right:10px;">
+                    <label for="uname"><b>Email address</b></label>
+                </div>
+                <div class="col-50">
+                    <label for="uname"><b>NRC</b></label>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-50" style="padding-right:10px;">
+                    <input type="text" placeholder="Enter Email " @bind-value="data.Person.EmailAddress" name="FirstName" required>
+                </div>
+                <div class="col-50">
+                    <input type="text" placeholder="Enter NRC Number" @bind-value="data.Person.NRC" name="FirstName" required>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-50" style="padding-right:10px;">
+                    <label for="uname"><b>Gender </b></label>
+                </div>
+                <div class="col-50">
+                    <label for="uname"><b>Image </b></label>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-50" style="padding-right:10px;">
+                    <div class="row">
+                        <div class="col-50">
+                            <input type="radio" checked="checked" @onchange="CheckGender" id="male" name="gender" value="0">
+                            <label for="male">Male</label><br>
+
+                        </div>
+                        <div class="col-50">
+                            <input type="radio" @onchange="CheckGender" value="1" id="female" name="gender">
+                            <label for="female">Female</label><br>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="uname"><b>Blood Group</b></label>
+                    </div>
+                    <div class="row">
+                        <input type="text" style="width:200px" placeholder="Enter Blood Group " @bind-value="data.Person.BloodGroup" name="FirstName" required>
+                    </div>
+                </div>
+                <div class="col-50" style="align-items:end">
+                    <img class="pic" src="data:image/jpeg;base64,@data.Person.Photo" style="height:150px;width:150px;" />
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-50" style="padding-right:10px;">
+
+                </div>
+                <div class="col-50">
+                    <InputFile OnChange="@OnInputFileChange" multiple />
+                </div>
+
+            </div>
+            <div class="row">
+
+                <label for="uname"><b>Education</b></label>
+                <input type="text" placeholder="Enter a Education " @bind-value="data.Person.Education" name="FirstName" required>
+            </div>
+            <div class="row">
+
+                <label for="uname"><b>Specialization</b></label>
+                <input type="text" placeholder="Enter a Specialization " @bind-value="data.Person.Specialization" name="FirstName" required>
+            </div>
+
+            <div class="row">
+                <div class="col-50" style="padding-right:10px;">
+                    <label for="uname"><b>BirthDay</b></label>
+                </div>
+                <div class="col-50">
+                    <label for="uname"><b>Basic Salary</b></label>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-50" style="padding-right:10px;">
+                    <input type="date" style="width:150px" @bind="@data.Person.DateOfBirth" name="FirstName" required>
+                </div>
+                <div class="col-50">
+                    <input type="text" style="width:150px;height:40px" placeholder="Enter a BasicSalary  " @bind-value="data.BasicSalary" name="FirstName" required>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-50" style="padding-right:10px;">
+                    <label for="uname"><b>Phone No</b></label>
+                </div>
+                <div class="col-50">
+                    <label for="uname"><b>Moblie No</b></label>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-50" style="padding-right:10px;">
+                    <input type="text" placeholder="Enter a  Phone " @bind-value="data.Person.PhoneNo" name="FirstName" required>
+                </div>
+                <div class="col-50">
+                    <input type="text" placeholder="Enter a  Moblie Phone " @bind-value="data.Person.ContactNo" name="FirstName" required>
+                </div>
+            </div>
+            <div class="row">
+
+                <label for="uname"><b>Shop Location</b></label>
+                <select @bind="@data.LocationID" required>
+                    <option value="0">Select Shop Location </option>
+                    @foreach (Location obj in getLocation)
+                    {
+                        <option value="@obj.ID">@obj?.ShopeName</option>
+                    }
+                </select>
+                @if (data?.LocationID == 0 || data?.LocationID == null)
+                {
+                    <div class="validation" style="display:block">Location is  Empty </div>
+                }
+                else
+                {
+                    <div class="validation" style="display:none">Location is  Empty </div>
+                }
+            </div>
+            <div class="row">
+
+                <label for="uname"><b> Contact Address</b></label>
+                <input type="text" placeholder="Enter a  Contact Address " @bind-value="data.Person.ContactAddress" name="FirstName" required>
+            </div>
+            <div class="row">
+
+                <label for="uname"><b> Home Address</b></label>
+                <input type="text" placeholder="Enter a  Home Address " @bind-value="data.Person.HomeAddress" name="FirstName" required>
+            </div>
+
+            <div class="row">
+                <div class="col-50" style="padding-right:10px;">
+                    <select required @onchange="ChangeRegion">
+                        <option value="0">Select Country</option>
+                        @foreach (Country obj in getCountry)
+                        {
+                            <option value="@obj.ID">@obj?.CountryName</option>
+                        }
+
+                    </select>
+                </div>
+                <div class="col-50">
+
+                    <select @onchange="((e)=>ChangeCity(e))" required>
+                        <option value="0">Select Region</option>
+                        @foreach (Region obj in getRegion)
+                        {
+                            <option value="@obj.ID">@obj?.RegionName</option>
+                        }
+                    </select>
+                </div>
+
+
+            </div>
+            <div class="row">
+
+                <div class="col-50" style="padding-right:10px;">
+
+                    <select @bind="@data.Person.CityID" required>
+                        <option value="0">Select City</option>
+                        @foreach (City obj in getCity)
+                        {
+                            <option value="@obj.ID">@obj?.CityName</option>
+                        }
+                    </select>
+                    @if (data?.Person?.CityID == 0 || data?.Person?.CityID == null)
+                    {
+                        <div class="validation" id="cityid" style="display:block">City is  Empty </div>
+                    }
+                    else
+                    {
+                        <div class="validation" style="display:none" id="ept1">EmployeeTypeID is  Empty </div>
+                    }
+                </div>
+                <div class="col-50">
+                    <select @bind="@data.EmployeeTypeID" required>
+                        <option value="0">Select Employee Type</option>
+                        @foreach (EmployeeType obj in getEmployeeType)
+                        {
+                            <option value="@obj.ID">@obj?.EmployeeTypeName</option>
+                        }
+                    </select>
+                    @if (data?.EmployeeTypeID == 0 || data?.EmployeeTypeID == null)
+                    {
+                        <div class="validation" style="display:block" id="ept1">EmployeeTypeID is  Empty </div>
+                    }
+                    else
+                    {
+                        <div class="validation" style="display:none" id="ept1">EmployeeTypeID is  Empty </div>
+                    }
+
+
+                </div>
+
+            </div>
+            <div class="row">
+
+                <label for="uname"><b> Short Biography</b></label>
+                <textarea placeholder="Enter a  ShortBiography " @bind="data.Person.ShortBiography" name="FirstName" required />
+            </div>
+            <label>
+            <input type="checkbox"  @onchange="CheckActive"  checked="checked" name="Active"> Active
+            </label>
+
+            <div class="ModelFooter">
+                <button type="button" @onclick="Close" class="btn btn-danger cancelbtn">Cancel</button>
+                <button type="button" @onclick="(() => OnConfirmationChange(data))" class="btn btn-success savebtn">Save</button>
+                @*<span class="psw">Forgot <a href="#">password?</a></span>*@
+            </div>
+        </div>
+
+        </form>
+    </div>
+
+}
+
+@code {
+
+    protected bool ShowConfirmation { get; set; }
+    [Parameter]
+    public Employee data { get; set; }
+    ElementReference Model { get; set; }
+    [Parameter]
+    public int Id { get; set; }
+    public string PageHeader { get; set; }
+
+
+    public void Show()
+    {
+        ShowConfirmation = true;
+
+        PageHeader = "Employee Create";
+        data = new Employee();
+    }
+    private IEnumerable<Country> getCountry { get; set; }
+
+    private IEnumerable<EmployeeType> getEmployeeType { get; set; }
+
+    private IEnumerable<Location> getLocation { get; set; }
+
+
+    private IEnumerable<Region> getRegion { get; set; }
+    private IEnumerable<City> getCity { get; set; }
+    public void Close()
+    {
+        ShowConfirmation = false;
+        // StateHasChanged();
+    }
+    public async void Edit(int ID)
+    {
+        ShowConfirmation = true;
+        PageHeader = "Employee  Edit";
+        data = await Service.Employees.GetAsync(ID);
+        //StateHasChanged();
+
+    }
+
+
+    protected override async System.Threading.Tasks.Task OnInitializedAsync()
+    {
+        data = new Employee();
+        var HRDResult = await Service.Countries.GetAsync(-1, 20);
+        getCountry = HRDResult;
+        getRegion = getCountry.FirstOrDefault()?.Divisions;
+        if (getRegion == null)
+        {
+            getRegion = new List<Region>();
+        }
+        getCity = getRegion.FirstOrDefault()?.City;
+        if(getCity==null)
+        {
+            getCity = new List<City>();
+        }
+        var Emptyperesult = await Service.EmployeeTypes.GetAsync(-1, 20);
+        getEmployeeType = Emptyperesult;
+        var Locationresult = await Service.Locations.GetAsync(-1, 20);
+        getLocation = Locationresult;
+
+        //var HREmp = await Service.Employees.GetAsync(-1, 20);
+        //getEmployee = HREmp;
+
+
+
+    }
+
+
+
+    [Parameter]
+    public EventCallback<Employee> EventAdd { get; set; }
+    protected async Task OnConfirmationChange(Employee value)
+    {
+
+        if (data.Person.CityID == null || data.EmployeeTypeID == null)
+        {
+            //  await InvokeAsync(() => { StateHasChanged(); });
+        }
+        else
+        {
+            ShowConfirmation = true;
+            await EventAdd.InvokeAsync(value);
+            data = new Employee();
+        }
+
+
+    }
+    void ChangeRegion(ChangeEventArgs e)
+    {
+
+        int Cid = Convert.ToInt32(e.Value.ToString());
+        if (Cid != 0)
+        {
+            getRegion = getCountry.FirstOrDefault(obj => obj.ID == Cid).Divisions;
+
+        }
+
+
+    }
+    void CheckGender(ChangeEventArgs e)
+    {
+
+        data.Person.Gender = (Gender) Convert.ToInt32(e.Value);
+    }
+    void CheckActive(ChangeEventArgs e)
+    {
+        if(Convert.ToBoolean(e.Value)==false)
+        {
+            data.Person.Status = Status.Inactive;
+        }
+        else
+        {
+            data.Person.Status = Status.Active;
+        }
+
+
+    }
+
+    void ChangeCity(ChangeEventArgs e)
+    {
+
+        int Cid = Convert.ToInt32(e.Value.ToString());
+        if (Cid != 0)
+        {
+
+            getCity = getRegion.FirstOrDefault(obj => obj.ID == Cid).City;
+
+        }
+
+
+    }
+
+
+    private async Task OnInputFileChange(IFileListEntry[] files)
+    {
+        var rawFile = files.FirstOrDefault();
+        if (rawFile != null)
+        {
+            // Load as an image file in memory
+            var format = "image/jpeg";
+            var imageFile = await rawFile.ToImageFileAsync(format, 640, 480);
+            var ms = new MemoryStream();
+            await imageFile.Data.CopyToAsync(ms);
+            //photo = $"data:{format};base64,{Convert.ToBase64String(ms.ToArray())}";
+            // Make a data URL so we can display it
+            data.Person.Photo = Convert.ToBase64String(ms.ToArray());
+
+        }
+    }
+}

@@ -1,0 +1,55 @@
+﻿@page "/counter"
+@inject DepandencyInjection.InterFaceModel imp
+@using BlazorInputFile
+@using System.IO; 
+
+<h1>Counter</h1>
+
+<p>Current count: @currentCount</p>
+<div>
+    <img class="rounded m-1" src="@imagepath" />
+
+    <InputFile OnChange="@OnInputFileChange" multiple />
+
+</div>
+
+
+        <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+        <div class="grid-container">
+            <select @onchange="onchang">
+                <option value="11"> aa</option>
+                <option value="22"> nn</option>
+            </select>
+        </div>
+
+        @code {
+    private int currentCount = 0;
+
+        private void IncrementCount()
+        {
+            currentCount++;
+        }
+        string imagepath = "";
+        int data = 0;
+        void onchang(ChangeEventArgs e)
+        {
+            var data = e.Value;
+        }
+        private async Task OnInputFileChange(IFileListEntry[] files)
+        {
+            var rawFile = files.FirstOrDefault();
+            if (rawFile != null)
+            {
+                // Load as an image file in memory
+                var format = "image/jpeg";
+                var imageFile = await rawFile.ToImageFileAsync(format, 640, 480);
+                var ms = new MemoryStream();
+                await imageFile.Data.CopyToAsync(ms);
+
+                // Make a data URL so we can display it
+                imagepath = $"data:{format};base64,{Convert.ToBase64String(ms.ToArray())}";
+
+                // status = $"Finished loading {ms.Length} bytes from {imageFile.Name}";
+            }
+        }
+        }

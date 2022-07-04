@@ -1,0 +1,225 @@
+﻿@page "/supplieradd/{Id:int}"
+@page "/supplieradd"
+@inject IJSRuntime JSRuntime
+@using NanoSoftGreenMark.Data
+@inject NanoSoftGreenMark.DepandencyInjection.InterFaceModel Service
+@using BlazorInputFile
+@using System.IO;
+
+@if (ShowConfirmation)
+{
+
+    <div class="model">
+
+        <form class="model-content animate">
+
+            <div class="imgcontainer">
+                <span @onclick="Close" class="close" title="Close Modal">&times;</span>
+                @*<img src="img_avatar2.png" alt="Avatar" class="avatar">*@
+                <h1>@PageHeader</h1>
+                <p>Please fill in this form to create  Supplier .</p>
+
+            </div>
+           
+            <div class="container">
+                <label for="uname"><b>Supplier Name</b></label>
+                <input type="text" placeholder="Enter a Supplier  Name" @bind-value="data.SupplierName" name="FirstName" required>
+
+                <label for="uname"><b>Email</b></label>
+                <input type="text" placeholder="Enter a Email" @bind-value="data.Email" name="FirstName" required>
+                <label for="uname"><b>Phone</b></label>
+                <input type="text" placeholder="Enter  a Phone " @bind-value="data.Phone" name="FirstName" required>
+                <label for="uname"><b>Address</b></label>
+                <input type="text" placeholder="Enter  a Address " @bind-value="data.Address" name="FirstName" required>
+                <label for="uname"><b>Contact</b></label>
+                <input type="text" placeholder="Enter  a Contact " @bind-value="data.Contact" name="FirstName" required>
+                <label for="uname"><b>Country</b></label>
+                <select required @onchange="ChangeRegion">
+                    <option value="0">Select Country</option>
+                    @foreach (Country obj in getCountry)
+                    {
+                        <option value="@obj.ID">@obj?.CountryName</option>
+                    }
+
+                </select>
+                <label for="uname"><b>Region</b></label>
+
+                <select @onchange="((e)=>ChangeCity(e))" required>
+                    <option value="0">Select Region</option>
+                    @foreach (Region obj in getRegion)
+                    {
+                        <option value="@obj.ID">@obj?.RegionName</option>
+                    }
+                </select>
+
+
+
+                <label for="uname"><b>City</b></label>
+
+                <select @bind="@data.CityID" required>
+                    <option value="0">Select City</option>
+                    @foreach (City obj in getCity)
+                    {
+                        <option value="@obj.ID">@obj?.CityName</option>
+                    }
+                </select>
+                @if (data.CityID == 0 || data.CityID == null)
+                {
+                    <div id="v2" class="validation" style="display:block">City is  Empty </div>
+                }
+                else
+                {
+                    <div id="v2" class="validation" style="display:none">City is  Empty </div>
+                }
+
+                <label for="uname"><b>Note </b></label>
+                <textarea placeholder="Enter Note Name" @bind="data.Detail" name="FirstName" required />
+                <label>
+                    <input type="checkbox" @onchange="CheckActive" checked="checked" name="Active"> Active
+                </label>
+            </div>
+
+            <div class="ModelFooter">
+                <button type="button" @onclick="Close" class="btn btn-danger cancelbtn">Cancel</button>
+                <button type="button" @onclick="(() => OnConfirmationChange(data))" class="btn btn-success savebtn">Save</button>
+                @*<span class="psw">Forgot <a href="#">password?</a></span>*@
+            </div>
+
+        </form>
+    </div>
+
+}
+
+@code {
+
+    protected bool ShowConfirmation { get; set; }
+    [Parameter]
+    public Supplier data { get; set; }
+    ElementReference Model { get; set; }
+    [Parameter]
+    public int Id { get; set; }
+    public string PageHeader { get; set; }
+    bool RegionVelida = false;
+
+    public void Show()
+    {
+        ShowConfirmation = true;
+
+        PageHeader = "Supplier Create";
+        data = new Supplier();
+    }
+    private IEnumerable<Country> _getCountry { get; set; }
+    protected IEnumerable<Country> getCountry
+    {
+        get { return _getCountry; }
+
+        set
+        {
+            if (!object.Equals(_getCountry, value))
+            {
+                _getCountry = value;
+
+                InvokeAsync(() => { StateHasChanged(); });
+            }
+        }
+    }
+
+
+    private IEnumerable<Region> getRegion { get; set; }
+    private IEnumerable<City> getCity { get; set; }
+    public void Close()
+    {
+        ShowConfirmation = false;
+        // StateHasChanged();
+    }
+    public async void Edit(int ID)
+    {
+        ShowConfirmation = true;
+        PageHeader = "Supplier Edit";
+        data = await Service.Suppliers.GetAsync(ID);
+        //StateHasChanged();
+
+    }
+
+
+    protected override async System.Threading.Tasks.Task OnInitializedAsync()
+    {
+        data = new Supplier();
+        var HRDResult = await Service.Countries.GetAsync(-1, 20);
+        getCountry = HRDResult;
+        getRegion = getCountry.FirstOrDefault()?.Divisions;
+        if (getRegion == null)
+        {
+            getRegion = new List<Region>();
+        }
+        getCity = getRegion.FirstOrDefault()?.City;
+        if (getCity == null)
+        {
+            getCity = new List<City>();
+        }
+
+
+
+    }
+
+
+
+    [Parameter]
+    public EventCallback<Supplier> EventAdd { get; set; }
+    protected async Task OnConfirmationChange(Supplier value)
+    {
+
+        if (data.CityID == null)
+        {
+            StateHasChanged();
+        }
+        else
+        {
+            ShowConfirmation = true;
+            await EventAdd.InvokeAsync(value);
+            data = new Supplier();
+        }
+
+
+    }
+    void ChangeRegion(ChangeEventArgs e)
+    {
+
+        int Cid = Convert.ToInt32(e.Value.ToString());
+        if (Cid != 0)
+        {
+            getRegion = getCountry.FirstOrDefault(obj => obj.ID == Cid).Divisions;
+
+        }
+
+
+    }
+
+    void ChangeCity(ChangeEventArgs e)
+    {
+
+        int Cid = Convert.ToInt32(e.Value.ToString());
+        if (Cid != 0)
+        {
+
+            getCity = getRegion.FirstOrDefault(obj => obj.ID == Cid).City;
+
+        }
+
+
+    }
+
+    void CheckActive(ChangeEventArgs e)
+    {
+        if (Convert.ToBoolean(e.Value) == false)
+        {
+            data.Status = Status.Inactive;
+        }
+        else
+        {
+            data.Status = Status.Active;
+        }
+
+
+    }
+}

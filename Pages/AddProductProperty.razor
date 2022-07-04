@@ -1,0 +1,88 @@
+﻿@page "/productpropertiesadd/{Id:int}"
+@page "/productpropertiesadd"
+@inject IJSRuntime JSRuntime
+@using NanoSoftGreenMark.Data
+@inject NanoSoftGreenMark.DepandencyInjection.InterFaceModel Service
+
+@if (ShowConfirmation)
+{
+
+    <div class="model">
+
+        <form class="model-content animate">
+            <div class="imgcontainer">
+                <span @onclick="Close" class="close" title="Close Modal">&times;</span>
+                @*<img src="img_avatar2.png" alt="Avatar" class="avatar">*@
+                <h1>@PageHeader</h1>
+                <p>Please fill in this form to create  Product Properties .</p>
+            </div>
+
+            <div class="container ">
+                <label for="uname"><b>Product Property Name</b></label>
+                <input type="text" placeholder="Enter Product Property Name" @bind-value="data.Properties" name="FirstName" required>
+
+
+            </div>
+
+            <div class="ModelFooter">
+                <button type="button" @onclick="Close" class="btn btn-danger cancelbtn">Cancel</button>
+                <button type="button" @onclick="(()=>OnConfirmationChange(data))" class="btn btn-success savebtn">Save</button>
+                @*<span class="psw">Forgot <a href="#">password?</a></span>*@
+            </div>
+        </form>
+    </div>
+}
+
+@code {
+
+    protected bool ShowConfirmation { get; set; }
+    [Parameter]
+    public ProductProperty data { get; set; }
+    ElementReference Model { get; set; }
+    [Parameter]
+    public int Id { get; set; }
+    public string PageHeader { get; set; }
+    public void Show()
+    {
+        ShowConfirmation = true;
+
+        PageHeader = "Product Property Create";
+        data = new ProductProperty();
+    }
+    public void Close()
+    {
+        ShowConfirmation = false;
+        StateHasChanged();
+    }
+    public async void Edit(int ID)
+    {
+        ShowConfirmation = true;
+        PageHeader = "Product Property Edit";
+        data = await Service.ProductPropertys.GetAsync(ID);
+        StateHasChanged();
+
+    }
+
+
+    protected override async System.Threading.Tasks.Task OnInitializedAsync()
+    {
+        data = new ProductProperty();
+
+        //await Load();
+
+
+    }
+
+
+
+    [Parameter]
+    public EventCallback<ProductProperty> EventAdd { get; set; }
+    protected async Task OnConfirmationChange(ProductProperty value)
+    {
+        ShowConfirmation = true;
+        await EventAdd.InvokeAsync(value);
+        data = new ProductProperty();
+    }
+
+
+}

@@ -1,0 +1,153 @@
+﻿@page "/employeepage"
+@inherits EmployeeComponent
+
+
+<h1 style="font-size:18px">Employee  Management</h1>
+<div class="grid-container">
+
+    <div>
+
+
+        <select class="PageSize" @onchange="ChangePageSize" id="PageSize" name="PageSize">
+            <option value="10">Page Size </option>
+            <option value="20">20</option>
+            <option value="30">30</option>
+            <option value="40">40</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
+
+
+    </div>
+    <div>
+
+        <form class="example">
+            <input type="text" placeholder="Search.." name="search" @bind="SearchTerm" @bind:event="oninput">
+            @*<button type="submit"><i class="fa fa-search"></i></button>*@
+        </form>
+
+    </div>
+
+    <div>
+        <button class="Icon" @onclick="AddCategory"><i class="oi oi-plus" style="padding-right:10px;"></i></button>
+    </div>
+    <div style="margin-right:10px">
+        <div class="btn-group">
+            <button class="btn btn-danger">ToPrint</button>
+            <button class="btn btn-warning" @onclick="ExportToExcel">ToExcel</button>
+            <button class="btn btn-success" @onclick="ExportToCSV">ToCSV</button>
+        </div>
+
+    </div>
+
+</div>
+<div class="Table-container">
+    <div>
+        @if (getEmployee == null)
+        {
+            <div class="spinner"></div>
+        }
+        else
+        {
+    <div class="container1">
+        @if (getEmployee.Count() > 0)
+        {
+            Count = ((PageIndex - 1) * PageSize) + 1;
+            @foreach (var obj in getEmployee)
+            {
+                <div class="card-wrapper1">
+                  
+                    <div class="card1">
+                        <div class="card-image1">
+
+                            <img src="data:image/jpeg;base64,@obj.Person.Photo" />
+                           
+                            <div class="details">
+                                <h2>
+
+                                    @obj.Person.FullName
+                                    @if (obj.Status == 0)
+                                    {
+                                        <input type="checkbox" checked="checked" name="Active">
+                                    }
+                                    else
+                                    {
+                                        <input type="checkbox"  name="Active">
+                                    }
+                                    <br>
+
+                                    <span class="job-title">@obj.Person.EmailAddress</span>
+                                    <span class="job-title">@obj.Person.PhoneNo</span>
+
+
+
+                                </h2>
+                        </div>
+                        </div>
+                        <div class="details">
+                            <h2>
+                                <span class="job-title">
+                                   NRC: @obj.Person.NRC</span>
+                                    <br>
+                                    <span class="job-title">Gender:@obj.Person.Gender,</span>  <span class="job-title">@obj.Person.DateOfBirth.Value.ToShortDateString()</span>
+                                    <br />
+                                    <span class="job-title">Blood Group: @obj.Person.BloodGroup</span>
+                                    <br>
+                                    <span class="job-title">@obj.Person.Education</span>
+                                    <br>
+                                    <span class="job-title">@obj.Person.Specialization</span>
+                                    <br>
+                                    <span class="job-title">Salary:@obj.BasicSalary</span>
+                                    <br>
+                                    <span class="job-title">Employee Type:@obj.EmployeeType.EmployeeTypeName</span>
+                                    <br>
+                                    <span class="job-title">@obj.Person.ContactAddress</span>
+                                    <br>
+                                    <span class="job-title">City:@obj.Person.City.CityName</span>
+</h2>
+                            <div class="btngroup">
+                                <button class="Icon" @onclick="(() => Delete(obj.ID))"><i class="oi oi-trash"></i></button>
+                                <button class="Icon" @onclick="(() => EditCategory(obj.ID))"><i class="oi oi-pencil"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+               
+
+
+
+            }
+        }
+    </div>
+
+        }
+    </div>
+    <DeleteConfirm @ref="DeleteConfirmation" ConfirmationChange="ConfirmDelete_Click"
+                   ConfirmationMessage=@($"Are you sure you want to delete")>
+    </DeleteConfirm>
+    <AddEmployee @ref="addComponent" EventAdd="AddData"></AddEmployee>
+
+    <div class="center">
+        <div class="pagination" @ref="Paging">
+            <a @onclick="(()=>Previous())">&laquo;</a>
+            @for (int i = 1; i <= PageCount; i++)
+            {
+                var buttonNumber = i;
+                if (i == 1)
+                {
+                    <a  @onclick="@(() => PageEvent(buttonNumber))">@i</a>
+                }
+                else
+                {
+                    <a @onclick="@(() => PageEvent(buttonNumber))">@i</a>
+                }
+
+            }
+            <a @onclick="(()=>Next())">&raquo;</a>
+        </div>
+    </div>
+</div>
+
+

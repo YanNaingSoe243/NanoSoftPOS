@@ -1,0 +1,47 @@
+﻿.Pcontainer1 {
+    display: grid;  
+    margin: 0 auto;
+    grid-template-columns: auto auto auto auto;
+}
+.Pcard-wrapper1 {
+    width: 300px;
+    height: 200px;
+    position: relative;
+    border-radius: 16px;
+}
+.Pcard-wrapper1 .title{
+    top:10%;
+    left:2%;
+
+}
+    .Pcard-wrapper1 .number {
+        bottom: 10%;
+        left: 2%;
+    }
+/*.card1 {
+    position: absolute;
+    bottom: 0;
+    right: 1px;
+    width: 100px;
+    height: 100px;
+    transform: translate(-50%, -50%);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: 0.5s;
+}*/
+.Pcard-image1 {
+    position: absolute;
+    bottom: 0;
+    right: 1px;
+    width: 100px;
+    height: 100px;
+    z-index: 2;
+    background-color: #000;
+    transition: .5s;
+}
+    .Pcard-image1 img {
+        height: 90%;
+        width: 90%;
+    }

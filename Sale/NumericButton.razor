@@ -1,0 +1,29 @@
+﻿@using NanoSoftGreenMark.Data
+<div class="numericbox">
+    <label @onclick="@Decrement" class="Icon"><i class="oi oi-arrow-bottom"></i></label>
+    <label> @obj.Quantity</label>
+    <label @onclick="@Increment" class="Icon"><i class="oi oi-arrow-top"></i></label>
+</div>
+
+@code {
+
+    [Parameter]
+    public InvoiceItem obj { get; set; }
+   
+    [Parameter]
+    public EventCallback<int> ValueChanged { get; set; }
+    private Task Decrement()
+    {
+        if (obj.Quantity > 1)
+            obj.Quantity--;
+        else
+            obj.Quantity = 1;
+        return ValueChanged.InvokeAsync(obj.Quantity);
+    }
+    private Task Increment()
+    {
+        obj.Quantity++;
+        return ValueChanged.InvokeAsync(obj.Quantity);
+    }
+
+}

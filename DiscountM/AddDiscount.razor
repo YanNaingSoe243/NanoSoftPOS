@@ -1,0 +1,133 @@
+﻿@page "/discountadd/{Id:int}"
+@page "/discountadd"
+@inject IJSRuntime JSRuntime
+@using NanoSoftGreenMark.Data
+@inject NanoSoftGreenMark.DepandencyInjection.InterFaceModel Service
+
+@if (ShowConfirmation)
+{
+
+    <div class="model">
+
+        <form class="model-content animate">
+            <div class="imgcontainer">
+                <span @onclick="Close" class="close" title="Close Modal">&times;</span>
+                @*<img src="img_avatar2.png" alt="Avatar" class="avatar">*@
+                <h1>@PageHeader</h1>
+                <p>Please fill in this form to create  Discount .</p>
+            </div>
+
+            <div class="container">
+                <label for="uname"><b>Discount Name</b></label>
+                <input type="text" placeholder="Enter Discount Name" @bind-value="data.DiscountName" name="FirstName" required>
+                <label for="uname"><b>Discount Type</b></label>
+
+                <select @bind="@data.DiscountTypeID" name="FirstName" required>
+                    <option value="0">Select Discount Type </option>
+                    @foreach (DiscountType obj in getCountry)
+                    {
+                        <option value="@obj.ID">@obj.DiscountTypeName</option>
+                    }
+
+                </select>
+                @if (data?.DiscountTypeID == 0 || data?.DiscountTypeID == null)
+                {
+                    <div class="validation" style="display:block;width:100%">DiscountType  is  Empty </div>
+                }
+                else
+                {
+                    <div class="validation" style="display:none">DiscountType is  Empty </div>
+                }
+                <label for="uname"><b>Discount  Number </b></label>
+                <input type="text" placeholder="Enter Discount number  Name" @bind-value="data.Percentage" name="FirstName" required>
+
+
+            </div>
+
+            <div class="ModelFooter">
+                <button type="button" @onclick="Close" class="btn btn-danger cancelbtn">Cancel</button>
+                <button type="button" @onclick="(()=>OnConfirmationChange(data))" class="btn btn-success savebtn">Save</button>
+                @*<span class="psw">Forgot <a href="#">password?</a></span>*@
+            </div>
+        </form>
+    </div>
+}
+
+@code {
+
+    protected bool ShowConfirmation { get; set; }
+    [Parameter]
+    public Discount data { get; set; }
+    ElementReference Model { get; set; }
+    [Parameter]
+    public int Id { get; set; }
+    public string PageHeader { get; set; }
+    public void Show()
+    {
+        ShowConfirmation = true;
+
+        PageHeader = "Discount Create";
+        data = new Discount();
+    }
+    private IEnumerable<DiscountType> _getCountry { get; set; }
+    protected IEnumerable<DiscountType> getCountry
+    {
+        get { return _getCountry; }
+
+        set
+        {
+            if (!object.Equals(_getCountry, value))
+            {
+                _getCountry = value;
+
+                InvokeAsync(() => { StateHasChanged(); });
+            }
+        }
+    }
+    public void Close()
+    {
+        ShowConfirmation = false;
+        // StateHasChanged();
+    }
+    public async void Edit(int ID)
+    {
+        ShowConfirmation = true;
+        PageHeader = "Discount  Edit";
+        data = await Service.Discounts.GetAsync(ID);
+        //  StateHasChanged();
+
+    }
+
+
+    protected override async System.Threading.Tasks.Task OnInitializedAsync()
+    {
+        data = new Discount();
+        var HRDResult = await Service.DiscountTypes.GetAsync(-1, 20);
+        getCountry = HRDResult;
+
+
+
+    }
+
+
+
+    [Parameter]
+    public EventCallback<Discount> EventAdd { get; set; }
+    protected async Task OnConfirmationChange(Discount value)
+    {
+        if(data.DiscountTypeID!=0  || data.DiscountTypeID!=null)
+        {
+
+
+            ShowConfirmation = true;
+            await EventAdd.InvokeAsync(value);
+            data = new Discount();
+        }
+        else
+        {
+
+        }
+    }
+
+
+}

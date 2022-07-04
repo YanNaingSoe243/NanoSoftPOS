@@ -1,0 +1,88 @@
+﻿@page "/brandadd/{Id:int}"
+@page "/brandadd"
+@inject IJSRuntime JSRuntime
+@using NanoSoftGreenMark.Data
+@inject NanoSoftGreenMark.DepandencyInjection.InterFaceModel Service
+
+@if (ShowConfirmation)
+{
+
+    <div class="model">
+
+        <form class="model-content animate">
+            <div class="imgcontainer">
+                <span @onclick="Close" class="close" title="Close Modal">&times;</span>
+                @*<img src="img_avatar2.png" alt="Avatar" class="avatar">*@
+                <h1>@PageHeader</h1>
+                <p>Please fill in this form to create  Category .</p>
+            </div>
+
+            <div class="container">
+                <label for="uname"><b>Brand Name</b></label>
+                <input type="text" placeholder="Enter Brand Name" @bind-value="data.BrandName" name="FirstName" required>
+
+               
+            </div>
+
+            <div class="ModelFooter">
+                <button type="button" @onclick="Close" class="btn btn-danger cancelbtn">Cancel</button>
+                <button type="button" @onclick="(()=>OnConfirmationChange(data))" class="btn btn-success savebtn">Save</button>
+                @*<span class="psw">Forgot <a href="#">password?</a></span>*@
+            </div>
+        </form>
+    </div>
+}
+
+@code {
+
+    protected bool ShowConfirmation { get; set; }
+    [Parameter]
+    public Brand data { get; set; }
+    ElementReference Model { get; set; }
+    [Parameter]
+    public int Id { get; set; }
+    public string PageHeader { get; set; }
+    public void Show()
+    {
+        ShowConfirmation = true;
+
+        PageHeader = "Brand Create";
+        data = new Brand();
+    }
+    public void Close()
+    {
+        ShowConfirmation = false;
+        StateHasChanged();
+    }
+    public async void Edit(int ID)
+    {
+        ShowConfirmation = true;
+        PageHeader = "Brands Edit";
+        data = await Service.Brands.GetAsync(ID);
+        StateHasChanged();
+
+    }
+
+
+    protected override async System.Threading.Tasks.Task OnInitializedAsync()
+    {
+        data = new Brand();
+
+        //await Load();
+
+
+    }
+
+
+
+    [Parameter]
+    public EventCallback<Brand> EventAdd { get; set; }
+    protected async Task OnConfirmationChange(Brand value)
+    {
+        ShowConfirmation = true;
+        await EventAdd.InvokeAsync(value);
+        data = new Brand();
+    }
+
+
+}

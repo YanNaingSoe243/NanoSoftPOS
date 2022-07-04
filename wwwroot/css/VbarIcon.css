@@ -1,0 +1,79 @@
+﻿.icon-bar {
+    height: auto;
+    width: 50px;
+    text-align: center;
+    background-color: #5e09ce;
+    position: fixed;
+    z-index: 1;
+    right: 0px;
+    top: 100px;
+    border: 3px solid #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    color: white;
+}
+.AddProductItem {
+    height: 100%;
+    width: 320px;
+    border-radius: 10px;
+    background: white;
+    transition: left 0.4s ease;
+    box-shadow: 0px 8px 8px 0px rgba(0,0,0,0.2);
+    position: fixed;
+    z-index: 1;
+    right: 50px;
+    top: 0px;
+    padding: 10px;
+    display: none;
+    overflow: auto;
+   
+}
+    .icon-bar a {
+        padding: 10px;
+        display: block;
+        transition: all 0.3s ease;
+        color: white;
+        font-size: 25px;
+        padding-right:10px;
+        /*width: 10%;
+        padding: 12px 0;
+        float: left;
+        transition: all 0.3s ease;
+        color: white;
+        font-size: 36px;*/
+    }
+        .icon-bar a li {
+            color: white;
+        }
+.icon-bar a  .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;   
+    position: absolute;
+    font-size:14px;
+    z-index: 1;
+    right:90%;
+}
+
+        .icon-bar a:hover .tooltiptext {
+            background-color: #5e09ce;
+            visibility: visible;
+        }
+
+.active {
+    background-color: #4CAF50;
+}
+
+.sampleDiv {
+    display: none;
+    margin-top:5px;
+}
+.red-input:focus + div {
+    /*background: #4CAF50;
+    color: white;*/
+    display: block;
+}
+

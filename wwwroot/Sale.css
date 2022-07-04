@@ -1,0 +1,548 @@
+﻿.sellflex-container {
+    display: flex;
+    flex-wrap: wrap;
+    height: 3.5rem;
+    background-color: white;
+    /*position:fixed;*/
+    width:100%;
+    padding-top: 0px;
+}
+.sticky {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    /*background-color: yellow;*/
+    /*padding: 50px;*/
+    /*font-size: 20px;*/
+}
+.NanoSoft {
+    color: #5e09ce;
+    font-size:26px;
+    font-family:'Times New Roman';
+    font-weight:bold;
+  
+}
+    .sellflex-container .flex-item-left .tooggle {
+        background-color: transparent;
+        color: #5e09ce;
+        border: none;
+        height: 35px;
+        width: 35px;
+        margin-left: 10px;
+        border-radius: 2px;
+        border: 1px solid #5e09ce;
+    }
+
+    .sellflex-container .flex-item-left ul {
+        list-style-type: none;
+        margin: 0;
+    }
+
+        .sellflex-container .flex-item-left ul li {
+            float: left;
+            padding-left: 30px;
+        }
+
+            .sellflex-container .flex-item-left ul li a {
+                display: block;
+                text-align: center;
+                text-decoration: none;
+                padding: 10px 5px 5px 5px;
+                font-size: 14px;
+                color:#000000;
+            }
+
+
+                .sellflex-container .flex-item-left ul li a:hover {
+                    border-bottom: 3px solid #5e09ce;
+                }
+
+
+.sellflex-container .flex-item-right .rightbar {
+    grid-auto-columns: auto auto;
+    margin-right: 10px;
+    padding: 10px 5px 5px 5px;
+    /*text-align:center;*/
+}
+
+    .sellflex-container .flex-item-right .rightbar .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 15px;
+    }
+
+    .sellflex-container .flex-item-right .rightbar button {
+        background-color: #5e09ce;
+        color: white;
+        font-size: 14px;
+    }
+.notification {
+   
+    text-decoration: none;
+    /*padding: 15px 26px;*/
+    position: relative;
+    display: inline-block;
+    border-radius: 2px;
+   
+}
+    .notification .CartIcon {
+        font-size: 24px;
+        color: #5e09ce;
+    }
+
+    .notification:hover {
+        background: none;
+    }
+
+.notification .badge {
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    /*padding: 5px 10px;*/
+    border-radius: 50%;
+    background: red;
+    color: white;
+    width:25px;
+    height:25px;
+    font-size:14px;
+    text-align:center;
+}
+
+.column {
+    float: left;   
+    height: auto; /* Should be removed. Only for demonstration */
+  
+}
+
+.left {
+    width: 15%;
+}
+
+.right {
+    width: 85%;
+  
+}
+.dalert {
+    width: 100%;
+    /*border-top: 1px solid #d6d5d5;*/
+    /*box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);*/
+    border-radius: 5px;
+    margin:10px 10px 20px 0;
+    height:200px;
+    
+}
+.MainContianer {
+    padding-top: 30px;
+    width: 98%;
+    height:auto;
+}
+/*.detailpage{
+    display:flex;
+    width:100%;
+    margin:10px;
+    height:700px;
+  
+}
+    .detailpage .right {
+        flex: 1;
+        width: 70%;
+        margin-right: 10px;      
+        overflow-y: auto;
+    }
+    .detailpage .productitem {
+        box-shadow: 1px 0 1px 1px rgba(0, 0, 0, 0.1);
+        border-radius: 16px;
+    }
+    .detailpage .left {
+        flex: 2;
+        width: 30%;
+        box-shadow: 1px 0 1px 1px rgba(0, 0, 0, 0.1);
+        border-radius: 16px;
+        height:500px;
+    }*/
+
+.productitem {
+    box-shadow: 1px 0 1px 1px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    width:100%;
+    margin:10px;
+    display:flex;
+}
+    .productitem .leftp {
+        flex: 1;
+        display: grid;
+        grid-auto-rows: auto auto;
+        margin: 10px;
+        grid-row-gap: 10px;       
+        border-radius: 10px;
+        align-content:center;
+        padding-left:5px;
+    }
+    .productitem .leftp img {
+        border-radius: 5px;       
+        width: 150px;
+        height: 150px;
+    }
+    .productitem .detail {
+        flex: 2;       
+        padding: 70px 0;
+        align-items: center;
+        grid-auto-rows: auto auto;
+        grid-row-gap: 10px;
+    }
+    .productitem  .Price{
+        box-shadow: 1px 0 1px 1px rgba(0, 0, 0, 0.1);
+        border-radius: 3px;
+        align-items: center;
+        margin:5px;
+        padding:10px;
+       font-size:16px;
+         
+    }
+.numericbox {
+    display: flex;
+    padding: 5px;
+    margin: 5px;
+    box-shadow: 1px 0 1px 1px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+}
+    .numericbox .Icon {
+        color: #5e09ce;
+        background-color: transparent;      
+        text-align: center;
+        font-size: 14px;
+        height:20px;
+        width:20px;
+        margin:5px;
+    }
+    .numericbox  label {
+        
+        font-size: 15px;       
+        text-align:center;
+        margin:5px;
+        padding:5px;
+
+        
+    }
+
+/*==================footer=================#3e8e41;*/
+.footer {
+    background-color:#3c0288;
+    width: 100%;
+    bottom: 0;
+}
+    .footer .col {
+        float: left;
+        width: 25%;
+        padding: 0 10px;
+        color:white;
+     }
+    .footer .row {    
+    margin: 0 -5px;
+    padding-top:10px;
+
+    }
+   
+    .footer .row:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+.service-item {
+    margin-bottom: 20px;
+    margin-top:20px;
+}
+
+  
+  .service-item .service-content {
+        padding-left: 75px;
+        color:white;
+   }
+
+  .service-item .service-content h4 {
+            margin-bottom: 15px;
+            font-weight: 400;
+   }
+
+/* Responsive columns - one column layout (vertical) on small screens 
+@media screen and (max-width: 600px) {
+    .footer .col {
+        width: 100%;
+        display: block;
+        margin-bottom: 20px;
+    }
+}*/
+
+.footer .dobule-link ul {
+    display: inline-block;
+}
+
+    .footer .dobule-link ul a {
+        display: block;
+        font-size: 14px;
+        color: #fff;
+        margin-bottom: 15px;
+    }
+
+        .footer.dobule-link ul a:hover {
+            color: #fff;
+        }
+
+    .footer .dobule-link ul li:last-child a {
+        margin-bottom: 0;
+    }
+
+    .footer .dobule-link ul:last-child {
+        margin-left: 50px;
+    }
+
+
+    /*=====================Column left======================
+
+
+    */
+
+    .vertical-menu{
+        width:200px;
+    }
+        .vertical-menu a {
+            background-color: #5e09ce;
+            color: white;
+            display: block;
+            padding: 12px;
+            margin-top: 12px;
+            text-decoration: none;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            border-radius:5px;
+        }
+    .vertical-menu a:hover{
+        background-color:#ffd800;
+    }
+    
+    .vertical-menu a.active{
+        background-color:#2b47e0;
+        color:white;
+    }
+            
+        .vertical-menu i {
+            color: white;
+        }
+
+.SaleProductContainer {
+    display: grid;
+    margin: 0 auto;
+    grid-template-columns: auto auto auto auto;
+    border: 1px solid #d6d5d5;
+    /*box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);*/
+    border-radius: 5px;
+    overflow-y: auto;
+    padding:0 10px 10px 10px;
+    height:600px;
+}
+.SaleCard {
+    width: 280px;
+    height: 180px;
+    position:relative;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 5px 0 5px 5px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    margin:10px 0 5px 0;
+    /*padding:5px;*/
+
+}
+    .SaleCard .SaleDetail {
+        position: relative;
+        padding: 10px 0 0 10px;       
+        left:0;
+        top:40px;
+        margin:5px;
+    }
+    .SaleCard .Pname {
+      
+       font-family: 'Times New Roman';
+        font-weight: bold;
+    }
+    p.small {
+        line-height: 0.7;
+    }
+.SaleCard .Price {
+    font-family: 'Times New Roman';
+    font-weight: bold;
+    color: white;
+    background-color:#15c908 ;
+    border-radius:10px;
+    padding: 0 5px 0 5px;
+    height:40px;
+    width:auto;
+}
+   
+
+.SaleCard .ImgDesign {
+    position: absolute;
+    width:auto;
+    height: auto;
+    z-index: 2;
+    background-color: #fff;
+    top:60px;
+    left:60%;
+    text-align:end;
+    transition: .5s;
+   
+}
+.ImgDesign img {
+    height: 120px;
+    width: 120px;
+    border-radius: 20px 0px 0 0;
+    /*margin-left: 25%;
+    margin-top: 30px;*/
+}
+.SaleCard .Count {
+    font-family: 'Times New Roman';
+    font-weight: bold;
+    color: #5e09ce;
+    font-size: 22px;
+    padding: 10px 0 0 10px;
+    position: absolute;
+    top: 0;
+    font-size: 24px;
+    left: 230px;
+}
+.SaleCard .AddCardButton {
+    position: absolute;
+    /*padding: 10px 0 0 10px;*/
+    /*left: 230px;*/
+    top: 0px;
+}
+.SaleCard .DiscountItem {
+    position: absolute;
+    bottom: 0px;
+    background-color: red;
+    width:auto;
+    height: 30px;
+    color: #fff;
+    border-radius: 0px 10px 0 0;
+    padding:0 5px 0 5px;
+}
+    .SaleCard .DiscountItem .DPrice {
+        font-family: 'Times New Roman';
+        font-weight: bold;
+        
+    }
+.stabledropdown {
+    position: relative;
+    display: inline-block;
+    color: #5e09ce;
+}
+
+    .stabledropdown button {
+        font-size: 22px;
+        font-weight: bold;
+        color: #5e09ce;
+    }
+.stabledropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    text-align: center;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    left: 0;
+    font-size: 14px;
+    min-width: 100px;
+}
+
+
+    .stabledropdown-content a {
+        color: #5e09ce;
+        padding-top: 14px;
+        padding-bottom: 14px;
+        text-decoration: none;
+        display: block;
+    }
+
+        /* Change color of dropdown links on hover */
+        .stabledropdown-content a:hover {
+            background-color: #e9e9e9;
+        }
+
+/* Show the dropdown menu on hover */
+.stabledropdown:hover .stabledropdown-content {
+    display: block;
+}
+
+
+
+.right .center {
+    padding-top: 5px;
+    text-align: center;
+    /*width: 100%;*/
+}
+
+.right .pagination {
+    display: inline-block;
+}
+
+    .right .pagination a {
+        color: #1861ac;
+        float: left;
+        padding: 8px 16px;
+        text-decoration: none;
+        transition: background-color .3s;
+        /*border: 1px solid #ddd;*/
+        border: 1px solid #5e09ce;
+        margin: 0 4px;
+        border-radius: 5px;
+    }
+
+
+
+        .right .pagination a.active {
+            border-radius: 5px;
+            background-color: #5e09ce;
+            color: white;
+        }
+
+        .right .pagination a:hover:not(.active) {
+            background-color: #5e09ce;
+            color: white;
+            border-radius: 5px;
+        }
+
+
+@media (max-width: 800px) {
+    .flex-item-right, .flex-item-left {
+        flex: 100%;
+        text-align: start;
+    }
+
+    .sidenav .Brand {
+        border-bottom: 1px solid white;
+        display: none;
+    }
+
+    .column {
+        width: 100%;
+    }
+
+    .MainContianer {
+        margin-top: 120px;
+        height: auto
+    }
+    .SaleProductContainer{
+        display: grid;
+        grid-template-columns: auto;
+        width: auto;
+        padding-left:40px;
+    }
+    .SaleCard{
+        width:350px;
+    }
+        .SaleCard .ImgDesign {
+           
+            left: 65%;
+         
+        }
+}

@@ -1,0 +1,20 @@
+﻿.PurchaseView {
+    display: grid;
+    /*justify-content: space-evenly;*/
+    margin: 0 auto;
+    grid-template-columns: auto auto ;
+    padding:10px;
+    
+}
+.PurchaseView-wrapper1 {
+    width: 550px;
+    height: auto;
+    position: relative;
+    border-radius: 16px;    
+    overflow:hidden;  
+    box-shadow: 5px 0 5px 5px rgba(0, 0, 0, 0.1);
+    margin-top:15px;
+    
+}
+
+

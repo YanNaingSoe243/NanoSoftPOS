@@ -1,0 +1,221 @@
+﻿@page "/purchasepage"
+@inherits PurchaseComponent;
+
+
+<h1 style="font-size:18px">Purchase Management</h1>
+<div class="grid-container">
+
+    <div>
+
+
+        <select class="PageSize" @onchange="ChangePageSize" id="PageSize" name="PageSize">
+            <option value="10">Page Size </option>
+            <option value="20">20</option>
+            <option value="30">30</option>
+            <option value="40">40</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
+
+
+    </div>
+    <div>
+
+        <form class="example">
+            <input type="text" placeholder="Search.." name="search" @bind="SearchTerm" @bind:event="oninput">
+            @*<button type="submit"><i class="fa fa-search"></i></button>*@
+        </form>
+
+    </div>
+
+    <div>
+        <button class="Icon" @onclick="AddCategory"><i class="oi oi-plus" style="padding-right:10px;"></i></button>
+    </div>
+    <div style="margin-right:10px">
+        <div class="btn-group">
+            <button class="btn btn-danger">ToPrint</button>
+            <button class="btn btn-warning" @onclick="ExportToExcel">ToExcel</button>
+            <button class="btn btn-success" @onclick="ExportToCSV">ToCSV</button>
+        </div>
+
+    </div>
+
+</div>
+<div class="Table-container">
+    <div>
+        @if (Categories == null)
+        {
+            <div class="spinner"></div>
+        }
+        else
+        {
+    <div class="PurchaseView">
+        @if (Categories.Count() > 0)
+        {
+            Count = ((PageIndex - 1) * PageSize) + 1;
+            @foreach (var obj in Categories)
+            {
+        <div class="PurchaseView-wrapper1">
+
+            <div class="row">
+                <div class="col-50" style="padding-top:13px;color:#5e09ce">
+
+                    NO:(@Count)
+
+                </div>
+                <div class="col-50" style="padding-left:40%">
+
+                    <div class="tabledropdown">
+                        <button class="btn">...</button>
+                        <div class="tabledropdown-content">
+                            <a @onclick="(() => EditCategory(obj.ID))">Edit</a>
+                            <a @onclick="(() => Delete(obj.ID))">Delete</a>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="row">
+                @*Purchase Vouncher header*@
+                <div class="col-50">
+                    <div class="row">
+                        Invoice  Number: @obj.InvoiceNumber
+                    </div>
+                    <div class="row">
+
+                        Invoice  Date: @obj.PurchaseDate.Value.ToShortDateString()
+
+                    </div>
+
+                </div>
+                <div class="col-50" style="padding-left:20px">
+                    <div class="row">
+
+                        Supplier Name
+
+                    </div>
+                    <div class="row">
+                        @obj.Supplier?.SupplierName
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="padding-top:10px;margin-left:0;padding-left:0;">
+                <table class="table alert-primary" style="text-align:center;padding:5px;overflow-x:scroll">
+                    <thead>
+                        <tr>
+
+                            <th> No.</th>
+                            <th>ProductName</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Total Price</th>                            
+                            <th>Order Status</th>
+
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var purobj in obj.PurchaseProdcuts)
+                        {
+                        <tr>
+
+                            <td>@purobj?.BatchNo</td>
+                           
+                            <td>@purobj?.Products.ProductName</td>
+                            <td>@purobj?.Quantity</td>
+                            <td>@purobj?.UnitPrice</td>
+                            <td>@purobj?.TotalPrice</td>
+                            <td>@purobj?.OrderStatus</td>
+
+                        </tr>
+
+
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+
+            <div style="padding-top:10px;color:#000000;bottom:0px;">
+
+                <div class="col-50">
+                    <div class="row">
+
+                        <label for="uname">Payment Status:@obj.PaymentStatus</label>
+                    </div>
+                    <div class="row">
+
+                        <label for="uname">Payment Method:@obj.PaymentMethod</label>
+                    </div>
+                </div>
+                <div class="col-50" style="padding-left:15%">
+                    <div class="row">
+
+                        <label for="uname"> Sub Total:@obj.SubTotal</label>
+
+
+                    </div>
+
+                    <div class="row">
+
+                        <label for="uname">Tax:@obj.Tax</label>
+
+                    </div>
+                    <div class="row">
+
+                        <label for="uname">Grand Total:@obj.GrandTotal</label>
+                    </div>
+                    <div class="row">
+
+                        <label for="uname">Total Discount:@obj.TotalDiscount</label>
+                    </div>
+                    <div class="row">
+
+                        <label for="uname">Net Total:@obj.NetTotal</label>
+                    </div>
+                </div>
+
+
+            </div>
+           
+
+
+        </div>
+                Count++;
+            }
+          }
+            </div>
+
+           
+
+        }
+
+    </div>
+    <ConfirnationForm @ref="DeleteConfirmation" ConfirmationChange="ConfirmDelete_Click"
+                      ConfirmationMessage=@($"Are you sure you want to delete")>
+    </ConfirnationForm>
+    <AddPurchase @ref="addCategory" EventAdd="AddData"></AddPurchase>
+
+    <div class="center">
+        <div class="pagination" @ref="Paging">
+            <a @onclick="(()=>Previous())">&laquo;</a>
+            @for (int i = 1; i <= PageCount; i++)
+            {
+                var buttonNumber = i;
+                if (i == 1)
+                {
+                    <a @onclick="@(() => PageEvent(buttonNumber))">@i</a>
+                }
+                else
+                {
+                    <a @onclick="@(() => PageEvent(buttonNumber))">@i</a>
+                }
+
+            }
+            <a @onclick="(()=>Next())">&raquo;</a>
+        </div>
+    </div>
+</div>
+
+

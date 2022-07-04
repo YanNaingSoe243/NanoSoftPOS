@@ -1,0 +1,223 @@
+﻿@layout SaleMainLayout
+@page "/detailpage"
+@using NanoSoftGreenMark.Data
+@inject NanoSoftGreenMark.DepandencyInjection.InterFaceModel Service
+@inject IJSRuntime JSRuntime
+
+@if (ShowConfirmation)
+{
+
+
+    <div class="model" style="z-index:10">
+
+        <form class="model-content animate">
+            <div class="imgcontainer">
+                <span @onclick="Close" class="close" title="Close Modal">&times;</span>
+                @*<img src="~/Nanoicon.png" alt="Avatar" class="avatar">*@
+                <p>Payment Voncher</p>
+               
+            </div>
+
+            <div class="container">
+
+                @if (invoice == null)
+                {
+                    <div class="spinner"></div>
+                }
+                else
+                {
+                    @if (invoice.purchaseItems.Count() > 0)
+                    {
+                        <div class="row">
+                            <label for="uname"><b>Invoice  Number</b></label>
+                            <input type="text" @bind-value="invoice.InvoiceNo" name="FirstName" required>
+                            <label for="uname"><b>Date </b></label>
+                            <input type="date" style="width:100%;height:50px ;padding: 12px 20px; margin: 8px 0;display: inline-block;border: 1px solid #ccc;box-sizing: border-box;" @bind-value="invoice.SellDate" name="FirstName" required>
+                        </div>
+                        @foreach (var obj in invoice.purchaseItems)
+                        {
+                            <div class="productitem">
+                                <div class="leftp">
+                                    <p style="font-weight:700"> @obj.Products.ProductName</p>
+                                    <img src="data:image/jpeg;base64,@obj.Products.Photo" />
+
+                                </div>
+
+                                <div class="detail">
+                                    <div> <p>@obj.Products.Note</p> </div>
+                                    <div style="display:flex">
+                                        <span class="Price" style="padding-right:10px;">Unit Price: $ @obj.Products.SellPrice</span>
+                                        <span style="font-weight: 700; padding-right: 10px; padding-left: 10px;"><NumericButton obj="@obj" ValueChanged="@((e)=>{ obj.Quantity = e;StateHasChanged(); })" ></NumericButton> </span>
+                                        <span class="Price" style="padding-left:10px;float:right">Total Price $ @obj.TotalPrice</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        }
+
+                    }
+
+                }
+                <div class="subtotal" style="margin-left:50%;">
+
+
+                    <div class="row">
+                        <div class="col-50" style="padding-right:10px;">
+                            <label for="uname"><b>Sub Total:</b></label>
+                        </div>
+                        <div class="col-50">
+                            <input type="text" style="width:150px;height:30px" placeholder="0.0" value="@invoice.SubTotal" name="FirstName" required>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-50" style="padding-right:10px;">
+                            <label for="uname"><b>Tax:</b></label>
+                        </div>
+                        <div class="col-50">
+                            <input type="text" style="width:150px;height:30px" placeholder="0.05" @bind-value="invoice.Tax" name="FirstName" required>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-50" style="padding-right:10px;">
+                            <label for="uname"><b>Grand Total:</b></label>
+                        </div>
+                        <div class="col-50">
+                            <input type="text" style="width:150px;height:30px" placeholder="0.0" value="@invoice.GrandTotal" name="FirstName" required>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-50" style="padding-right:10px;">
+                            <label for="uname"><b>Total Discount:</b></label>
+                        </div>
+                        <div class="col-50">
+                            <input type="text" style="width:150px;height:30px" placeholder="0.0" value="@invoice.TotalDiscount" name="FirstName" required>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-50" style="padding-right:10px;">
+                            <label for="uname"><b>Net  Total:</b></label>
+                        </div>
+                        <div class="col-50">
+                            <input type="text" style="width:150px;height:30px" placeholder="0.0" value="@invoice.NetTotal" name="FirstName" required>
+
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="row">
+
+
+                    <label for="uname"><b>Order Status:</b></label>
+
+
+                    <select @bind="@invoice.PaymentStatus" required>
+                        @*<option value="null">Select Payment Status </option>*@
+                        @foreach (OrderStatus obj in Enum.GetValues(typeof(OrderStatus)))
+                        {
+                            <option value="@obj">@obj</option>
+                        }
+                    </select>
+                    @if (invoice?.PaymentStatus == null)
+                    {
+                        <div class="validation" style="display:block;width:100%">Order Status is  Empty </div>
+                    }
+                    else
+                    {
+                <div class="validation" style="display:none">Order Status is  Empty </div>
+                    }
+
+
+                </div>
+                <div class="row">
+
+
+                    <label for="uname"><b>PaymentStatus:</b></label>
+
+
+                    <select @bind="@invoice.PaymentStatus" required>
+                        @*<option value="null">Select Payment Status </option>*@
+                        @foreach (PaymentStatus obj in Enum.GetValues(typeof(PaymentStatus)))
+                        {
+                            <option value="@obj">@obj</option>
+                        }
+                    </select>
+                    @if (invoice?.PaymentStatus == null)
+                    {
+                        <div class="validation" style="display:block;width:100%">Payment Status is  Empty </div>
+                    }
+                    else
+                    {
+                        <div class="validation" style="display:none">Payment Status is  Empty </div>
+                    }
+
+
+                </div>
+                <div class="row">
+
+
+                    <label for="uname"><b>Payment Method:</b></label>
+
+
+                    <select @bind="@invoice.PaymentMethod" required>
+                        @*<option value="null">Select Payment Status </option>*@
+                        @foreach (PaymentMethod obj in Enum.GetValues(typeof(PaymentMethod)))
+                        {
+                            <option value="@obj">@obj</option>
+                        }
+                    </select>
+                    @if (invoice?.PaymentMethod == null)
+                    {
+                        <div class="validation" style="display:block;width:100%">PaymentMethod Status is  Empty </div>
+                    }
+                    else
+                    {
+                        <div class="validation" style="display:none">PaymentMethod Status is  Empty </div>
+                    }
+
+
+                </div>
+
+            </div>
+              
+
+            <div class="ModelFooter">
+                <button type="button" @onclick="Close" class="btn btn-danger cancelbtn">Cancel</button>
+                <button type="button"class="btn btn-success savebtn">Print</button>
+               
+            </div>
+        </form>
+    </div>
+  
+
+}
+
+
+@code {
+    protected bool ShowConfirmation { get; set; }
+    [Parameter]
+    public Invoice invoice { get; set; }
+    public void Show()
+    {
+        ShowConfirmation = true;
+
+
+    }
+    public void Close()
+    {
+        ShowConfirmation = false;
+        StateHasChanged();
+    }
+    
+   
+    //public async void PassData(Invoice obj)
+    //{
+    //    invoice = obj;
+    //}
+}

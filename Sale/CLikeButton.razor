@@ -1,0 +1,20 @@
+﻿<a  @onclick="@ToggleLike" class="@icon @( liked == true ? "active" : " " )" style="color:#ffffff">
+   @title
+</a>
+
+@code {
+
+    bool liked = false;
+    [Parameter]
+    public string icon { get; set; }
+    [Parameter]
+    public string title { get; set; }
+    //public int id { get; set; }
+
+     void ToggleLike()
+    {
+        liked = !liked;
+    }
+    // [Parameter] EventCallback<bool> OnLikeToggled { get; set; }
+
+}

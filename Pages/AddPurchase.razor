@@ -1,0 +1,613 @@
+﻿@page "/purchaseadd/{Id:int}"
+@page "/purchaseadd"
+@inject IJSRuntime JSRuntime
+@using NanoSoftGreenMark.Data
+@inject NanoSoftGreenMark.DepandencyInjection.InterFaceModel Service
+@using BlazorInputFile
+@using System.IO;
+
+@if (ShowConfirmation)
+{
+
+    <div class="model" >
+
+        <form class="model-content animate" style="width:70%;margin-right:30%;margin-left:2%">
+            <div class="imgcontainer">
+                <span @onclick="Close" class="close" title="Close Modal">&times;</span>
+                @*<img src="img_avatar2.png" alt="Avatar" class="avatar">*@
+                <h1>@PageHeader</h1>
+                <p>Please fill in this form to create  Purchase .</p>
+            </div>
+
+           
+            <div class="container">
+                <div class="row">
+                    <label for="uname"><b>Invoice  Number</b></label>
+                    <input type="text" placeholder="Enter Invoice  Number" @bind-value="data.InvoiceNumber" name="FirstName" required>
+                    <label for="uname"><b>Purchase  Date </b></label>
+                    <input type="date" style="width:100%;height:50px ;padding: 12px 20px; margin: 8px 0;display: inline-block;border: 1px solid #ccc;box-sizing: border-box;" @bind="@data.PurchaseDate" name="FirstName" required>
+
+                    <label for="uname"><b>Supplier </b></label>
+                    <select @bind="@data.SupplierID" required>
+                        <option value="0">Select Supplier </option>
+                        @foreach (Supplier obj in GetSuppliers)
+                        {
+                            <option value="@obj.ID">@obj?.SupplierName</option>
+                        }
+                    </select>
+                    @if (data?.SupplierID == 0 || data?.SupplierID == null)
+                    {
+                        <div class="validation" style="display:block;width:100%">SupplierID is  Empty </div>
+                    }
+                    else
+                    {
+                        <div class="validation" style="display:none">Supplier is  Empty </div>
+                    }
+                </div>
+                <AddProduct @ref="addCategory" EventAdd="AddData"></AddProduct>
+                <div class="icon-bar">
+                    <a onclick="document.getElementById('AddProduct1').style.display ='block'"><span class="tooltiptext">Add Purchase Item</span><i class="oi oi-list"></i></a>
+                    <a @onclick="AddCategory"><span class="tooltiptext">Create Product New Item</span><i class="oi oi-plus"></i></a>
+
+                </div>
+                <div class="AddProductItem" id="AddProduct1">
+                    <div class="imgcontainer">
+                        <span onclick="document.getElementById('AddProduct1').style.display ='none'" class="close" title="Close Modal" style="padding-top:5px">&times;</span>
+                        <p>Please fill in this form to create  Purchase Item .</p>
+                    </div>
+                    <label for="uname"><b>Category</b></label>
+                    <select  required @onchange="ChangeCategory">
+                        <option value="0">Select Category </option>
+                        @foreach (Category obj in getCategory)
+                        {
+                            <option value="@obj.ID">@obj?.CategoryName</option>
+                        }
+                    </select>
+                    <label for="uname"><b>Product Name </b></label>
+                    <input type="text" autocomplete="on" list="BarcodeSuggestion" class="red-input" placeholder="@dataItem.Products.Barcode"  @onchange="@((args) => SelectProduct(args))" name="FirstName" required>
+
+                    <datalist id="BarcodeSuggestion">
+
+                        @foreach (Product obj in getProduct)
+                        {
+
+                            <option label="@obj.ProductName" value="@obj.Barcode"></option>
+
+                        }
+                    </datalist>
+                    @if (dataItem?.ProductFK == null)
+                    {
+                        <div class="validation" style="display:block;width:100%">Product   is  Empty </div>
+                    }
+                    else
+                    {
+                        <div class="validation" style="display:none">Product is  Empty </div>
+                    }
+
+                    @*<div class="sampleDiv">
+
+                <table class="table">
+
+                    <tbody>
+                        @foreach (Product obj in getProduct)
+                        {
+                            <tr>
+
+                                <td>@obj.ProductName</td>
+                                <td>@obj.Barcode</td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+
+
+            </div>*@
+
+
+
+
+
+
+                    @*<label for="uname"><b>Barcode </b></label>
+            <input type="text" autoComplete="on" list="BarcodeSuggestion"   placeholder="Enter Barcode   Number" @bind-value="data.Remark" name="FirstName" required>
+            <datalist id="BarcodeSuggestion">
+
+                @foreach (Product obj in getProduct)
+                {
+                    <option value="@obj.Barcode"></option>
+                }
+            </datalist>*@
+                    <label for="uname"><b>Batch No </b></label>
+                    <input type="text" placeholder="Enter Batch   Name" @bind-value="dataItem.BatchNo" name="FirstName" required>
+                    <label for="uname"><b>Quantity </b></label>
+                    <input type="text" placeholder="Enter Quantity   Name" @bind-value="dataItem.Quantity" name="FirstName" required>
+                    <label for="uname"><b>UnitPrice </b></label>
+                    <input type="text" placeholder="Enter Unit Price   Name" @bind-value="dataItem.UnitPrice" name="FirstName" required>
+                    <label for="uname"><b>Total Price </b></label>
+                    <input type="text" placeholder="@dataItem.TotalPrice" name="FirstName" required>
+                    <label for="uname"><b>Expire Date </b></label>
+                    <input type="date" style="width:100%;height:50px ;padding: 12px 20px; margin: 8px 0;display: inline-block;border: 1px solid #ccc;box-sizing: border-box;" @bind-value="@dataItem.ExpiryDate" name="FirstName" required>
+                    @if (dataItem?.ExpiryDate == null)
+                    {
+                        <div class="validation" style="display:block;width:100%">Expire Date  is  Empty </div>
+                    }
+                    else
+                    {
+                        <div class="validation" style="display:none">Expire Date  is  Empty </div>
+                    }
+                    <label for="uname"><b>Discount</b></label>
+                    <select @bind="@dataItem.DiscountID" required>
+                        <option value="0">Select Discount </option>
+                        @foreach (Discount obj in getDiscount)
+                        {
+                            <option value="@obj.ID">@obj?.DiscountName</option>
+                        }
+                    </select>
+                    @if (dataItem?.DiscountID == 0 || dataItem?.DiscountID == null)
+                    {
+                        <div class="validation" style="display:block;width:100%">Discount is  Empty </div>
+                    }
+                    else
+                    {
+                        <div class="validation" style="display:none">Discount is  Empty </div>
+                    }
+                    <select @bind="@dataItem.PaymentStatus" required>
+                        @*<option value="null">Select Payment Status </option>*@
+                        @foreach (PaymentStatus obj in Enum.GetValues(typeof(PaymentStatus)))
+                        {
+                            <option value="@obj">@obj</option>
+                        }
+                    </select>
+                    @if (dataItem?.PaymentStatus == null)
+                    {
+                        <div class="validation" style="display:block;width:100%">Payment Status is  Empty </div>
+                    }
+                    else
+                    {
+                        <div class="validation" style="display:none">Payment Status is  Empty </div>
+                    }
+                    <select @bind="@dataItem.OrderStatus" required>
+                        @*<option value="null">Select Order Status </option>*@
+                        @foreach (OrderStatus obj in Enum.GetValues(typeof(OrderStatus)))
+                        {
+                            <option value="@obj">@obj</option>
+                        }
+                    </select>
+                    @if (dataItem?.OrderStatus == null)
+                    {
+                        <div class="validation" style="display:block;width:100%">Order Status is  Empty </div>
+                    }
+                    else
+                    {
+                        <div class="validation" style="display:none">Order Status is  Empty </div>
+                    }
+
+                    <label for="uname"><b>Product Unit per Price </b></label>
+                    <input type="text" @bind-value="@dataItem.Products.UnitPrice" name="FirstName" required>
+                    <label for="uname"><b>Product Per Package Price </b></label>
+                    <input type="text" @bind-value="@dataItem.Products.SellPrice" name="FirstName" required>
+                    <div>
+                        <button type="button" @onclick="(() => SaveItem())" class="btn btn-success savebtn">Save</button>
+                    </div>
+                </div>
+                <div style="border-top:2px solid #5e09ce;margin-left:5px;">
+
+                    <div class="table1">
+
+                        <div class="row1 header green">
+                            <div class="cell">
+                                ProductName
+                            </div>
+                            <div class="cell">
+                                BatchName
+                            </div>
+                            <div class="cell">
+                                Quantity
+                            </div>
+                            <div class="cell">
+                                UnitPrice
+                            </div>
+                            <div class="cell">
+                                TotalPrice
+                            </div>
+                            <div class="cell">
+                                Expire
+                            </div>
+                            <div class="cell">
+                                OrderStatus
+                            </div>
+                            <div class="cell">
+                                PaymentStatus
+                            </div>
+                            <div class="cell">
+                                %
+                            </div>
+                            <div class="cell">
+
+                            </div>
+
+                        </div>
+                        @if (data.PurchaseProdcuts.Count() > 0)
+                        {
+
+                            @foreach (PurchaseItem obj in data.PurchaseProdcuts)
+                            {
+                                <div class="row1">
+                                    <div class="cell">
+                                        @obj?.Products?.ProductName
+                                    </div>
+                                    <div class="cell">
+                                        @obj?.BatchNo
+                                    </div>
+                                    <div class="cell">
+                                        @obj?.Quantity
+                                    </div>
+                                    <div class="cell">
+                                        @obj?.UnitPrice
+                                    </div>
+                                    <div class="cell">
+                                        @obj?.TotalPrice
+                                    </div>
+                                    <div class="cell">
+                                        @obj?.ExpiryDate.Value.ToShortDateString()
+                                    </div>
+                                    <div class="cell">
+                                        @obj?.OrderStatus
+                                    </div>
+                                    <div class="cell">
+                                        @obj?.PaymentStatus
+                                    </div>
+                                    <div class="cell">
+                                        @obj?.Discount?.DiscountName
+                                    </div>
+                                    <div class="cell">
+                                        <div class="tabledropdown">
+                                            <button class="btn">...</button>
+                                            <div class="tabledropdown-content">
+                                                <a  @onclick="(() => EditItem(obj))">Edit</a>
+                                                <a @onclick="(() => Delete(obj))">Delete</a>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            }
+                        }
+                    </div>
+
+                </div>
+
+
+
+
+
+                <div class="subtotal" style="margin-left:50%;">
+
+
+                    <div class="row">
+                        <div class="col-50" style="padding-right:10px;">
+                            <label for="uname"><b>Sub Total:</b></label>
+                        </div>
+                        <div class="col-50">
+                            <input type="text" style="width:150px;height:30px" placeholder="0.0" value="@data.SubTotal" name="FirstName" required>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-50" style="padding-right:10px;">
+                            <label for="uname"><b>Tax:</b></label>
+                        </div>
+                        <div class="col-50">
+                            <input type="text" style="width:150px;height:30px" placeholder="0.05" @bind-value="data.Tax" name="FirstName" required>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-50" style="padding-right:10px;">
+                            <label for="uname"><b>Grand Total:</b></label>
+                        </div>
+                        <div class="col-50">
+                            <input type="text" style="width:150px;height:30px" placeholder="0.0" value="@data.GrandTotal" name="FirstName" required>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-50" style="padding-right:10px;">
+                            <label for="uname"><b>Total Discount:</b></label>
+                        </div>
+                        <div class="col-50">
+                            <input type="text" style="width:150px;height:30px" placeholder="0.0" value="@data.TotalDiscount" name="FirstName" required>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-50" style="padding-right:10px;">
+                            <label for="uname"><b>Net  Total:</b></label>
+                        </div>
+                        <div class="col-50">
+                            <input type="text" style="width:150px;height:30px" placeholder="0.0" value="@data.NetTotal" name="FirstName" required>
+
+                        </div>
+                    </div>
+
+
+                </div>
+
+
+                <div class="row">
+
+                   
+                        <label for="uname"><b>PaymentStatus:</b></label>
+                  
+                  
+                        <select @bind="@data.PaymentStatus" required>
+                            @*<option value="null">Select Payment Status </option>*@
+                            @foreach (PaymentStatus obj in Enum.GetValues(typeof(PaymentStatus)))
+                            {
+                                <option value="@obj">@obj</option>
+                            }
+                        </select>
+                        @if (data?.PaymentStatus == null)
+                        {
+                            <div class="validation" style="display:block;width:100%">Payment Status is  Empty </div>
+                        }
+                        else
+                        {
+                            <div class="validation" style="display:none">Payment Status is  Empty </div>
+                        }
+
+                  
+                </div>
+                <div class="row">
+
+                  
+                        <label for="uname"><b>Payment Method:</b></label>
+                  
+                
+                        <select @bind="@data.PaymentMethod" required>
+                            @*<option value="null">Select Payment Status </option>*@
+                            @foreach (PaymentMethod obj in Enum.GetValues(typeof(PaymentMethod)))
+                            {
+                                <option value="@obj">@obj</option>
+                            }
+                        </select>
+                        @if (data?.PaymentMethod == null)
+                        {
+                            <div class="validation" style="display:block;width:100%">PaymentMethod Status is  Empty </div>
+                        }
+                        else
+                        {
+                            <div class="validation" style="display:none">PaymentMethod Status is  Empty </div>
+                        }
+
+                  
+                </div>
+
+                <label for="uname"><b> Remark </b></label>
+                <textarea placeholder="Enter a  Note " @bind="data.Remark" name="FirstName" required />
+
+
+            </div>
+
+            <div class="ModelFooter">
+                <button type="button" @onclick="Close" class="btn btn-danger cancelbtn">Cancel</button>
+                <button type="button" @onclick="(()=>OnConfirmationChange(data))" class="btn btn-success savebtn">Save</button>
+                @*<span class="psw">Forgot <a href="#">password?</a></span>*@
+            </div>
+        </form>
+    </div>
+}
+
+@code {
+    protected AddProduct addCategory { get; set; }
+    protected bool ShowConfirmation { get; set; }
+    [Parameter]
+    public Purchase data { get; set; }
+    public PurchaseItem dataItem { get; set; }
+    ElementReference Model { get; set; }
+    [Parameter]
+    public int Id { get; set; }
+    public string PageHeader { get; set; }
+    private IEnumerable<Supplier> GetSuppliers { get; set; }
+    private IEnumerable<Discount> getDiscount { get; set; }
+    private IEnumerable<Category> getCategory { get; set; } = new List<Category>();
+    private IEnumerable<Product> getProduct { get; set; } = new List<Product>();
+    private string name;
+
+
+
+    bool update = false;
+    public void Show()
+    {
+        ShowConfirmation = true;
+
+        PageHeader = "Purchase  Create";
+        data = new Purchase();
+        dataItem = new PurchaseItem();
+
+    }
+    public void Close()
+    {
+        ShowConfirmation = false;
+        StateHasChanged();
+    }
+    public async void Edit(int ID)
+    {
+        ShowConfirmation = true;
+        PageHeader = "Purchase Edit";
+        data = await Service.Purchases.GetAsync(ID);
+        StateHasChanged();
+        update = true;
+
+    }
+    bool itemupdate=false;
+
+    protected override async System.Threading.Tasks.Task OnInitializedAsync()
+    {
+        data = new Purchase();
+        dataItem = new PurchaseItem();
+
+        //await Load();
+        var ProductPresult = await Service.Suppliers.GetAsync(-1, 20);
+        GetSuppliers = ProductPresult;
+        var DiscountResult = await Service.Discounts.GetAsync(-1, 20);
+        getDiscount = DiscountResult;
+        var CagetoryResult = await Service.Categorys.GetAsync(-1, 20);
+        getCategory = CagetoryResult;
+
+
+
+
+    }
+
+    void ChangeCategory(ChangeEventArgs e)
+    {
+
+        int Cid = Convert.ToInt32(e.Value.ToString());
+        if (Cid != 0)
+        {
+            getProduct = getCategory.FirstOrDefault(obj => obj.ID == Cid).Products;
+
+        }
+
+
+    }
+    async void  SelectProduct(ChangeEventArgs e)
+    {
+
+
+        if (e.Value.ToString() != "")
+        {
+            Product  p = getProduct.FirstOrDefault(obj => obj.Barcode == e.Value.ToString());
+            if (p != null)
+            {
+                dataItem.ProductFK = p.ID;
+                dataItem.Products = p;
+
+                IEnumerable<PurchaseItem> getPurchaseItem = await Service.PurchaseItems.GetAsync(p.Barcode);
+                dataItem.BatchNo = "B" + p.ID.ToString() + (getPurchaseItem.Count() + 1).ToString();
+                //dataItem.Products = p;
+            }
+
+        }
+
+
+    }
+    async void SaveItem()
+    {
+        if (itemupdate == false)
+        {
+            if (dataItem.ProductFK != null)
+            {
+                dataItem.Products.ManufacturerPrice = dataItem.UnitPrice;
+                dataItem.Stock = dataItem.Quantity;
+                dataItem.Discount = getDiscount.FirstOrDefault(item => item.ID == dataItem.DiscountID);
+                await Service.Products.UpInsertAsync(dataItem.Products);
+                data.PurchaseProdcuts.Add(dataItem);
+                dataItem = new PurchaseItem();
+
+            }
+        }
+        else
+        {
+            if (dataItem.ProductFK != null)
+            {
+
+                dataItem = new PurchaseItem();
+            }
+        }
+        itemupdate = false;
+
+    }
+   async  void Delete(PurchaseItem item)
+    {
+        if (item != null)
+        {
+            if (update == true)
+            {
+                var Result = await Service.PurchaseItems.DeleteAsync(item.ID);
+            }
+            else
+            {
+                data.PurchaseProdcuts.Remove(item);
+            }
+        }
+    }
+    async  void EditItem(PurchaseItem  item)
+    {
+        dataItem = item;
+        itemupdate = true;
+    }
+
+    [Parameter]
+    public EventCallback<Purchase> EventAdd { get; set; }
+    protected async Task OnConfirmationChange(Purchase value)
+    {
+        ShowConfirmation = true;
+        if (update == false)
+        {
+
+
+            if (data.SupplierID == null )
+            {
+                //  await InvokeAsync(() => { StateHasChanged(); });
+            }
+            else
+            {
+                ShowConfirmation = true;
+
+                await EventAdd.InvokeAsync(value);
+                data = new Purchase();
+                dataItem = new PurchaseItem();
+
+            }
+
+        }
+        else
+        {
+
+            ShowConfirmation = true;
+            await EventAdd.InvokeAsync(value);
+            data = new Purchase();
+
+
+        }
+        update = false;
+
+    }
+
+
+    protected void AddCategory()
+    {
+        addCategory.Show();
+
+    }
+    public async System.Threading.Tasks.Task AddData(Product data)
+    {
+        try
+        {
+            if (data != null)
+            {
+                await Service.Products.UpInsertAsync(data);
+            }
+
+
+        }
+        catch (Exception Ex)
+        {
+            //NotificationService.Notify(NotificationSeverity.Error, $"Error", $"Unable to create new Branch!");
+        }
+
+    }
+
+    protected async void BarcodeSelect(Product obj)
+    {
+        IEnumerable<PurchaseItem> puritem = await Service.PurchaseItems.GetAsync(obj.Barcode);
+        dataItem.BatchNo = "B-" + obj.ID.ToString() + (puritem.Count() + 1).ToString();
+    }
+
+}
